@@ -1,0 +1,26 @@
+{
+  "name": "typinghero-server",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "set NODE_OPTIONS=--use-system-ca&& ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc -p .",
+    "prestart": "npm run build",
+    "start": "set NODE_OPTIONS=--use-system-ca&& node dist/index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.1.4",
+    "express": "^4.18.2",
+    "mongodb": "^6.1.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.19",
+    "@types/node": "^20.14.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.5.4"
+  }
+}
+
