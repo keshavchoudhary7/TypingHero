@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import { signInWithPopup } from 'firebase/auth';
-import { auth as firebaseAuth, googleProvider, facebookProvider, linkedinProvider } from './firebase';
+import { auth as firebaseAuth, googleProvider } from './firebase';
 
 export type User = {
   id: string;
@@ -15,8 +15,8 @@ type AuthContextType = {
   error: string | null;
   login: (username: string, password: string) => Promise<boolean>;
   register: (username: string, password: string, avatarId?: string) => Promise<boolean>;
-  loginWithOAuth: (providerName: 'google' | 'facebook' | 'linkedin') => Promise<boolean>;
-  registerWithOAuth: (providerName: 'google' | 'facebook' | 'linkedin', avatarId?: string) => Promise<boolean>;
+  loginWithOAuth: (providerName: 'google') => Promise<boolean>;
+  registerWithOAuth: (providerName: 'google', avatarId?: string) => Promise<boolean>;
   logout: () => void;
   updateAvatar: (avatarId: string) => Promise<boolean>;
   clearError: () => void;
@@ -154,25 +154,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const getProvider = (providerName: 'google' | 'facebook' | 'linkedin') => {
-    switch (providerName) {
-      case 'google':
-        return googleProvider;
-      case 'facebook':
-        return facebookProvider;
-      case 'linkedin':
-        return linkedinProvider;
-      default:
-        throw new Error(`Unsupported provider: ${providerName}`);
-    }
-  };
-
-  const loginWithOAuth = async (providerName: 'google' | 'facebook' | 'linkedin'): Promise<boolean> => {
+  const loginWithOAuth = async (providerName: 'google'): Promise<boolean> => {
     setError(null);
     setLoading(true);
     try {
-      const provider = getProvider(providerName);
-      const userCredential = await signInWithPopup(firebaseAuth, provider);
+      const userCredential = await signInWithPopup(firebaseAuth, googleProvider);
       const idToken = await userCredential.user.getIdToken();
 
       const response = await fetch('http://localhost:4000/api/auth/oauth-login', {
@@ -202,14 +188,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const registerWithOAuth = async (
-    providerName: 'google' | 'facebook' | 'linkedin',
+    providerName: 'google',
     avatarId = 'knight'
   ): Promise<boolean> => {
     setError(null);
     setLoading(true);
     try {
-      const provider = getProvider(providerName);
-      const userCredential = await signInWithPopup(firebaseAuth, provider);
+      const userCredential = await signInWithPopup(firebaseAuth, googleProvider);
       const idToken = await userCredential.user.getIdToken();
 
       const response = await fetch('http://localhost:4000/api/auth/oauth-register', {

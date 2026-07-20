@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, FacebookAuthProvider, OAuthProvider } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 
 // Firebase client configuration
 const firebaseConfig = {
@@ -17,5 +17,4 @@ export const auth = getAuth(app);
 
 // Authentication Providers
 export const googleProvider = new GoogleAuthProvider();
-export const facebookProvider = new FacebookAuthProvider();
-export const linkedinProvider = new OAuthProvider('linkedin.com');
+

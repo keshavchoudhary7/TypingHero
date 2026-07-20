@@ -17,7 +17,7 @@ export default function AuthPage() {
   const [selectedAvatar, setSelectedAvatar] = useState('knight');
   const [formError, setFormError] = useState<string | null>(null);
 
-  const handleOAuth = async (provider: 'google' | 'facebook' | 'linkedin') => {
+  const handleOAuth = async (provider: 'google') => {
     setFormError(null);
     clearError();
     try {
@@ -157,27 +157,13 @@ export default function AuthPage() {
           </div>
 
           {/* Social OAuth Buttons */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="flex justify-center">
             <button
               type="button"
               onClick={() => handleOAuth('google')}
-              className="flex items-center justify-center gap-1.5 rounded-xl border border-slate-800 bg-slate-950/50 py-2.5 text-xs font-semibold text-slate-300 hover:border-red-500/50 hover:bg-red-500/5 transition-all cursor-pointer"
+              className="flex w-full items-center justify-center gap-2.5 rounded-xl border border-slate-800 bg-slate-950/50 py-3 text-sm font-semibold text-slate-300 hover:border-red-500/50 hover:bg-red-500/5 transition-all cursor-pointer"
             >
-              <span className="text-red-500">🔴</span> Google
-            </button>
-            <button
-              type="button"
-              onClick={() => handleOAuth('facebook')}
-              className="flex items-center justify-center gap-1.5 rounded-xl border border-slate-800 bg-slate-950/50 py-2.5 text-xs font-semibold text-slate-300 hover:border-blue-500/50 hover:bg-blue-500/5 transition-all cursor-pointer"
-            >
-              <span className="text-blue-500">🔵</span> Facebook
-            </button>
-            <button
-              type="button"
-              onClick={() => handleOAuth('linkedin')}
-              className="flex items-center justify-center gap-1.5 rounded-xl border border-slate-800 bg-slate-950/50 py-2.5 text-xs font-semibold text-slate-300 hover:border-cyan-500/50 hover:bg-cyan-500/5 transition-all cursor-pointer"
-            >
-              <span className="text-cyan-400">🔷</span> LinkedIn
+              <span className="text-red-500">🔴</span> Sign in with Google
             </button>
           </div>
         </form>

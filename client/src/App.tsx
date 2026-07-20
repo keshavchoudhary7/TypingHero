@@ -107,27 +107,29 @@ function NavigationLayout() {
           </div>
 
           {/* Navigation Links */}
-          <nav className="flex items-center gap-1.5 md:gap-4">
-            {[
-              { id: 'arena', label: 'Arena', icon: '🎮' },
-              { id: 'leaderboards', label: 'Leaderboards', icon: '🏆' },
-              { id: 'multiplayer', label: 'Multiplayer', icon: '⚔️' },
-              { id: 'profile', label: 'Profile', icon: '👤' },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => handleTabClick(tab.id as any)}
-                className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                  activeTab === tab.id
-                    ? 'bg-slate-900 border border-slate-800 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.05)]'
-                    : 'text-slate-400 hover:text-slate-200 border border-transparent'
-                }`}
-              >
-                <span>{tab.icon}</span>
-                <span className="hidden sm:inline">{tab.label}</span>
-              </button>
-            ))}
-          </nav>
+          {user && (
+            <nav className="flex items-center gap-1.5 md:gap-4">
+              {[
+                { id: 'arena', label: 'Arena', icon: '🎮' },
+                { id: 'leaderboards', label: 'Leaderboards', icon: '🏆' },
+                { id: 'multiplayer', label: 'Multiplayer', icon: '⚔️' },
+                { id: 'profile', label: 'Profile', icon: '👤' },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => handleTabClick(tab.id as any)}
+                  className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                    activeTab === tab.id
+                      ? 'bg-slate-900 border border-slate-800 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.05)]'
+                      : 'text-slate-400 hover:text-slate-200 border border-transparent'
+                  }`}
+                >
+                  <span>{tab.icon}</span>
+                  <span className="hidden sm:inline">{tab.label}</span>
+                </button>
+              ))}
+            </nav>
+          )}
 
           {/* Auth Button */}
           <div className="flex items-center gap-3">
