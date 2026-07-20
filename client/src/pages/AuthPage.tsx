@@ -10,12 +10,26 @@ const AVAILABLE_AVATARS = [
 ];
 
 export default function AuthPage() {
-  const { login, register, error, clearError } = useAuth();
+  const { login, register, loginWithOAuth, registerWithOAuth, error, clearError } = useAuth();
   const [isRegistering, setIsRegistering] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState('knight');
   const [formError, setFormError] = useState<string | null>(null);
+
+  const handleOAuth = async (provider: 'google' | 'facebook' | 'linkedin') => {
+    setFormError(null);
+    clearError();
+    try {
+      if (isRegistering) {
+        await registerWithOAuth(provider, selectedAvatar);
+      } else {
+        await loginWithOAuth(provider);
+      }
+    } catch (err: any) {
+      setFormError(err.message || 'OAuth authentication failed.');
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -131,6 +145,41 @@ export default function AuthPage() {
           >
             {isRegistering ? 'Begin Adventure' : 'Enter Arena'}
           </button>
+
+          {/* Divider */}
+          <div className="relative my-6 flex items-center justify-center">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-slate-800"></div>
+            </div>
+            <span className="relative bg-[#0a0e1c] px-3 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+              Or Choose Social Path
+            </span>
+          </div>
+
+          {/* Social OAuth Buttons */}
+          <div className="grid grid-cols-3 gap-3">
+            <button
+              type="button"
+              onClick={() => handleOAuth('google')}
+              className="flex items-center justify-center gap-1.5 rounded-xl border border-slate-800 bg-slate-950/50 py-2.5 text-xs font-semibold text-slate-300 hover:border-red-500/50 hover:bg-red-500/5 transition-all cursor-pointer"
+            >
+              <span className="text-red-500">🔴</span> Google
+            </button>
+            <button
+              type="button"
+              onClick={() => handleOAuth('facebook')}
+              className="flex items-center justify-center gap-1.5 rounded-xl border border-slate-800 bg-slate-950/50 py-2.5 text-xs font-semibold text-slate-300 hover:border-blue-500/50 hover:bg-blue-500/5 transition-all cursor-pointer"
+            >
+              <span className="text-blue-500">🔵</span> Facebook
+            </button>
+            <button
+              type="button"
+              onClick={() => handleOAuth('linkedin')}
+              className="flex items-center justify-center gap-1.5 rounded-xl border border-slate-800 bg-slate-950/50 py-2.5 text-xs font-semibold text-slate-300 hover:border-cyan-500/50 hover:bg-cyan-500/5 transition-all cursor-pointer"
+            >
+              <span className="text-cyan-400">🔷</span> LinkedIn
+            </button>
+          </div>
         </form>
 
         {/* Toggle Switch */}

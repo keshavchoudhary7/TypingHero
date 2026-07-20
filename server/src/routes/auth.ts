@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { getDatabase } from '../lib/db.js';
 import { hashPassword, verifyPassword, signToken, verifyToken } from '../models/user.js';
 import { ObjectId } from 'mongodb';
+import { verifyFirebaseToken } from '../lib/firebaseAdmin.js';
 
 const router = Router();
 
@@ -168,6 +169,155 @@ router.post('/avatar', requireAuth, async (req: any, res) => {
   } catch (error) {
     console.error('Failed to update avatar:', error);
     return res.status(500).json({ error: 'Failed to update avatar' });
+  }
+});
+
+// ─── POST /oauth-register ───────────────────────────────────────────────────
+router.post('/oauth-register', async (req, res) => {
+  const { idToken, provider, avatarId } = req.body;
+  if (!idToken) {
+    return res.status(400).json({ error: 'Firebase ID Token is required' });
+  }
+
+  try {
+    const decoded = await verifyFirebaseToken(idToken);
+    const { email, name, uid } = decoded;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email address is required for registration.' });
+    }
+
+    const db = await getDatabase();
+    
+    // Check if user already exists with this email (case-insensitive)
+    const existingUser = await db.collection('users').findOne({
+      email: { $regex: new RegExp(`^${email.trim()}$`, 'i') }
+    });
+
+    if (existingUser) {
+      return res.status(400).json({
+        error: 'Account already exists. Please go to the Login page to sign in.'
+      });
+    }
+
+    // Generate a unique username based on the display name
+    let baseUsername = name.replace(/[^a-zA-Z0-9]/g, '').slice(0, 15);
+    if (baseUsername.length < 3) baseUsername = 'Hero';
+    let uniqueUsername = baseUsername;
+    let exists = true;
+    let counter = 0;
+
+    while (exists) {
+      const found = await db.collection('users').findOne({
+        username: { $regex: new RegExp(`^${uniqueUsername}$`, 'i') }
+      });
+      if (!found) {
+        exists = false;
+      } else {
+        counter++;
+        uniqueUsername = `${baseUsername}${counter}`;
+      }
+    }
+
+    const selectedAvatar = avatarId || 'knight';
+
+    const result = await db.collection('users').insertOne({
+      username: uniqueUsername,
+      email: email.toLowerCase().trim(),
+      firebaseUid: uid,
+      avatarId: selectedAvatar,
+      provider: provider || 'unknown',
+      createdAt: new Date(),
+    });
+
+    const userId = result.insertedId.toString();
+    const token = signToken({ userId, username: uniqueUsername });
+
+    // Initialize progress for this new user
+    await db.collection('progress').updateOne(
+      { userId },
+      {
+        $setOnInsert: {
+          userId,
+          completedLevels: [],
+          levelResults: {},
+          activeLevelId: null,
+          xp: 0,
+          streak: 0,
+          lastPlayedDate: null,
+          dailyChallengeDoneDate: null,
+          updatedAt: new Date(),
+        }
+      },
+      { upsert: true }
+    );
+
+    return res.json({
+      success: true,
+      token,
+      user: {
+        id: userId,
+        username: uniqueUsername,
+        avatarId: selectedAvatar
+      }
+    });
+  } catch (err: any) {
+    console.error('OAuth registration error:', err);
+    return res.status(400).json({ error: err.message || 'OAuth registration failed.' });
+  }
+});
+
+// ─── POST /oauth-login ──────────────────────────────────────────────────────
+router.post('/oauth-login', async (req, res) => {
+  const { idToken, provider } = req.body;
+  if (!idToken) {
+    return res.status(400).json({ error: 'Firebase ID Token is required' });
+  }
+
+  try {
+    const decoded = await verifyFirebaseToken(idToken);
+    const { email, uid } = decoded;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email address is required to log in.' });
+    }
+
+    const db = await getDatabase();
+
+    // Find the user by email (case-insensitive)
+    const user = await db.collection('users').findOne({
+      email: { $regex: new RegExp(`^${email.trim()}$`, 'i') }
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        error: 'No account found with this email. Please register first.'
+      });
+    }
+
+    // If user exists but firebaseUid is not linked, link it now
+    if (!user.firebaseUid) {
+      await db.collection('users').updateOne(
+        { _id: user._id },
+        { $set: { firebaseUid: uid, provider: provider || 'unknown' } }
+      );
+    }
+
+    const userId = user._id.toString();
+    const token = signToken({ userId, username: user.username });
+
+    return res.json({
+      success: true,
+      token,
+      user: {
+        id: userId,
+        username: user.username,
+        avatarId: user.avatarId || 'knight'
+      }
+    });
+  } catch (err: any) {
+    console.error('OAuth login error:', err);
+    return res.status(400).json({ error: err.message || 'OAuth login failed.' });
   }
 });
 

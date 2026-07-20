@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { signInWithPopup } from 'firebase/auth';
+import { auth as firebaseAuth, googleProvider, facebookProvider, linkedinProvider } from './firebase';
 
 export type User = {
   id: string;
@@ -13,6 +15,8 @@ type AuthContextType = {
   error: string | null;
   login: (username: string, password: string) => Promise<boolean>;
   register: (username: string, password: string, avatarId?: string) => Promise<boolean>;
+  loginWithOAuth: (providerName: 'google' | 'facebook' | 'linkedin') => Promise<boolean>;
+  registerWithOAuth: (providerName: 'google' | 'facebook' | 'linkedin', avatarId?: string) => Promise<boolean>;
   logout: () => void;
   updateAvatar: (avatarId: string) => Promise<boolean>;
   clearError: () => void;
@@ -150,6 +154,90 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const getProvider = (providerName: 'google' | 'facebook' | 'linkedin') => {
+    switch (providerName) {
+      case 'google':
+        return googleProvider;
+      case 'facebook':
+        return facebookProvider;
+      case 'linkedin':
+        return linkedinProvider;
+      default:
+        throw new Error(`Unsupported provider: ${providerName}`);
+    }
+  };
+
+  const loginWithOAuth = async (providerName: 'google' | 'facebook' | 'linkedin'): Promise<boolean> => {
+    setError(null);
+    setLoading(true);
+    try {
+      const provider = getProvider(providerName);
+      const userCredential = await signInWithPopup(firebaseAuth, provider);
+      const idToken = await userCredential.user.getIdToken();
+
+      const response = await fetch('http://localhost:4000/api/auth/oauth-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken, provider: providerName }),
+      });
+
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        setError(data.error || 'OAuth Login failed');
+        setLoading(false);
+        return false;
+      }
+
+      setToken(data.token);
+      setUser(data.user);
+      localStorage.setItem('typinghero_token', data.token);
+      setLoading(false);
+      return true;
+    } catch (err: any) {
+      console.error('OAuth Login Error:', err);
+      setError(err.message || 'OAuth Connection failed.');
+      setLoading(false);
+      return false;
+    }
+  };
+
+  const registerWithOAuth = async (
+    providerName: 'google' | 'facebook' | 'linkedin',
+    avatarId = 'knight'
+  ): Promise<boolean> => {
+    setError(null);
+    setLoading(true);
+    try {
+      const provider = getProvider(providerName);
+      const userCredential = await signInWithPopup(firebaseAuth, provider);
+      const idToken = await userCredential.user.getIdToken();
+
+      const response = await fetch('http://localhost:4000/api/auth/oauth-register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken, provider: providerName, avatarId }),
+      });
+
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        setError(data.error || 'OAuth Registration failed');
+        setLoading(false);
+        return false;
+      }
+
+      setToken(data.token);
+      setUser(data.user);
+      localStorage.setItem('typinghero_token', data.token);
+      setLoading(false);
+      return true;
+    } catch (err: any) {
+      console.error('OAuth Registration Error:', err);
+      setError(err.message || 'OAuth Connection failed.');
+      setLoading(false);
+      return false;
+    }
+  };
+
   const clearError = () => setError(null);
 
   return (
@@ -161,6 +249,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         error,
         login,
         register,
+        loginWithOAuth,
+        registerWithOAuth,
         logout,
         updateAvatar,
         clearError,
