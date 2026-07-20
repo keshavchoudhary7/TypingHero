@@ -12,7 +12,7 @@ const AVAILABLE_AVATARS = [
 export default function AuthPage() {
   const { login, register, loginWithOAuth, registerWithOAuth, error, clearError } = useAuth();
   const [isRegistering, setIsRegistering] = useState(false);
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState('knight');
   const [formError, setFormError] = useState<string | null>(null);
@@ -36,8 +36,9 @@ export default function AuthPage() {
     setFormError(null);
     clearError();
 
-    if (username.trim().length < 3) {
-      setFormError('Username must be at least 3 characters.');
+    const emailTrimmed = email.trim();
+    if (!emailTrimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTrimmed)) {
+      setFormError('Please enter a valid email address.');
       return;
     }
     if (password.length < 6) {
@@ -46,9 +47,9 @@ export default function AuthPage() {
     }
 
     if (isRegistering) {
-      await register(username, password, selectedAvatar);
+      await register(emailTrimmed, password, selectedAvatar);
     } else {
-      await login(username, password);
+      await login(emailTrimmed, password);
     }
   };
 
@@ -79,17 +80,18 @@ export default function AuthPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Username */}
+          {/* Email */}
           <div>
             <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
-              Hero Username
+              Hero Email
             </label>
             <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-200 outline-none transition-colors focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20"
-              placeholder="Enter username"
+              placeholder="Enter your email"
+              autoComplete="email"
               required
             />
           </div>

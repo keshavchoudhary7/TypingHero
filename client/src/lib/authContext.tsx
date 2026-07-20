@@ -1,6 +1,11 @@
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import { signInWithPopup } from 'firebase/auth';
-import { auth as firebaseAuth, googleProvider } from './firebase';
+import {
+  auth as firebaseAuth,
+  googleProvider,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from './firebase';
 
 export type User = {
   id: string;
@@ -13,8 +18,8 @@ type AuthContextType = {
   token: string | null;
   loading: boolean;
   error: string | null;
-  login: (username: string, password: string) => Promise<boolean>;
-  register: (username: string, password: string, avatarId?: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<boolean>;
+  register: (email: string, password: string, avatarId?: string) => Promise<boolean>;
   loginWithOAuth: (providerName: 'google') => Promise<boolean>;
   registerWithOAuth: (providerName: 'google', avatarId?: string) => Promise<boolean>;
   logout: () => void;
@@ -54,27 +59,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (data.success && data.user) {
           setUser(data.user);
         } else {
-          // Token invalid or expired
           logout();
         }
       } else {
         logout();
       }
     } catch {
-      // Offline or server down: keep existing session in memory for fallback, but stop loading
+      // Offline or server down: keep existing session in memory for fallback
     } finally {
       setLoading(false);
     }
   };
 
-  const login = async (username: string, password: string): Promise<boolean> => {
+  // ─── Email / Password Login (via Firebase) ────────────────────────────────
+  const login = async (email: string, password: string): Promise<boolean> => {
     setError(null);
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:4000/api/auth/login', {
+      const userCredential = await signInWithEmailAndPassword(firebaseAuth, email, password);
+      const idToken = await userCredential.user.getIdToken();
+
+      const response = await fetch('http://localhost:4000/api/auth/oauth-login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ idToken, provider: 'email' }),
       });
 
       const data = await response.json();
@@ -89,21 +97,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('typinghero_token', data.token);
       setLoading(false);
       return true;
-    } catch {
-      setError('Server connection unavailable.');
+    } catch (err: any) {
+      const msg = firebaseErrorMessage(err.code);
+      setError(msg);
       setLoading(false);
       return false;
     }
   };
 
-  const register = async (username: string, password: string, avatarId = 'knight'): Promise<boolean> => {
+  // ─── Email / Password Register (via Firebase) ─────────────────────────────
+  const register = async (email: string, password: string, avatarId = 'knight'): Promise<boolean> => {
     setError(null);
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:4000/api/auth/register', {
+      const userCredential = await createUserWithEmailAndPassword(firebaseAuth, email, password);
+      const idToken = await userCredential.user.getIdToken();
+
+      const response = await fetch('http://localhost:4000/api/auth/oauth-register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password, avatarId }),
+        body: JSON.stringify({ idToken, provider: 'email', avatarId }),
       });
 
       const data = await response.json();
@@ -118,8 +131,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('typinghero_token', data.token);
       setLoading(false);
       return true;
-    } catch {
-      setError('Server connection unavailable.');
+    } catch (err: any) {
+      const msg = firebaseErrorMessage(err.code);
+      setError(msg);
       setLoading(false);
       return false;
     }
@@ -252,4 +266,28 @@ export function useAuth() {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
+}
+
+// ─── Firebase Error Code → Human-readable message ────────────────────────────
+function firebaseErrorMessage(code: string): string {
+  switch (code) {
+    case 'auth/invalid-email':
+      return 'Please enter a valid email address.';
+    case 'auth/user-not-found':
+    case 'auth/wrong-password':
+    case 'auth/invalid-credential':
+      return 'Invalid email or password.';
+    case 'auth/email-already-in-use':
+      return 'An account with this email already exists. Please log in.';
+    case 'auth/weak-password':
+      return 'Password must be at least 6 characters.';
+    case 'auth/too-many-requests':
+      return 'Too many failed attempts. Please try again later.';
+    case 'auth/network-request-failed':
+      return 'Network error. Please check your connection.';
+    case 'auth/operation-not-allowed':
+      return 'Email/password sign-in is not enabled. Please contact support.';
+    default:
+      return 'Authentication failed. Please try again.';
+  }
 }
