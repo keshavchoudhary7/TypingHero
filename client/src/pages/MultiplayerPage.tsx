@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, type ChangeEvent } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { useAuth } from '../lib/authContext';
 import RaceTrack from '../components/game/RaceTrack';
 import { WS_BASE } from '../lib/apiBase';
@@ -217,7 +217,7 @@ export default function MultiplayerPage() {
   };
 
   // Typing Arena logic
-  const startRaceLocal = (passageText: string) => {
+  const startRaceLocal = (_passageText: string) => {
     setTyped('');
     setElapsedMs(0);
     setStartedAt(Date.now());

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { useAuth } from '../lib/authContext';
+import { useEffect, useState } from 'react';
 import { API_BASE } from '../lib/apiBase';
 
 type GlobalLeader = {
@@ -33,7 +32,6 @@ const RANK_MEDALS: Record<number, string> = {
 };
 
 export default function LeaderboardPage() {
-  const { token } = useAuth();
   const [activeTab, setActiveTab] = useState<'global' | 'level'>('global');
   const [selectedLevel, setSelectedLevel] = useState<number>(1);
   const [globalLeaders, setGlobalLeaders] = useState<GlobalLeader[]>([]);

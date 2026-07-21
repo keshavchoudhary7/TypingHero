@@ -8,16 +8,16 @@ describe('progressApi', () => {
         activeLevelId: 3,
         completedLevels: [1, 2],
         levelResults: {
-          1: { accuracy: 90, wpm: 60, stars: 3 },
-          2: { accuracy: 95, wpm: 70, stars: 4 },
+          1: { accuracy: 90, wpm: 60, netWpm: 54, stars: 3 },
+          2: { accuracy: 95, wpm: 70, netWpm: 66, stars: 4 },
         },
       }),
     ).toEqual({
       activeLevelId: 3,
       completedLevels: [1, 2],
       levelResults: {
-        1: { accuracy: 90, wpm: 60, stars: 3 },
-        2: { accuracy: 95, wpm: 70, stars: 4 },
+        1: { accuracy: 90, wpm: 60, netWpm: 54, stars: 3 },
+        2: { accuracy: 95, wpm: 70, netWpm: 66, stars: 4 },
       },
     });
   });

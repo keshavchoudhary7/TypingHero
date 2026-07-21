@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 type Player = {
   id: string;

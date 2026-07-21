@@ -388,7 +388,6 @@ function DashboardPage() {
     
     // Log keypress timings for anti-cheat verification
     if (nextValue.length > typed.length) {
-      const activeStartedAt = startedAt ?? Date.now();
       const offset = startedAt ? Date.now() - startedAt : 0;
       const lastChar = nextValue[nextValue.length - 1] || '';
       keystrokeLogsRef.current.push({ offset, char: lastChar });
