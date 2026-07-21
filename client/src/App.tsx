@@ -60,7 +60,15 @@ const AVATAR_EMOJIS: Record<string, string> = {
 
 function NavigationLayout() {
   const { user, loading, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState<'arena' | 'leaderboards' | 'multiplayer' | 'profile'>('arena');
+  const [activeTab, setActiveTab] = useState<'arena' | 'leaderboards' | 'multiplayer' | 'profile'>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('room') || params.get('join')) {
+        return 'multiplayer';
+      }
+    }
+    return 'arena';
+  });
 
   const handleTabClick = (tab: 'arena' | 'leaderboards' | 'multiplayer' | 'profile') => {
     setActiveTab(tab);
