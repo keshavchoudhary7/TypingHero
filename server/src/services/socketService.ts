@@ -429,6 +429,29 @@ function handleWSMessage(socket: any, message: string) {
         sendWSMessage(socket, { type: 'left_room' });
         break;
       }
+
+      case 'rematch': {
+        const room = getPlayerRoom(socket);
+        if (room) {
+          if (room.countdownTimer) clearInterval(room.countdownTimer);
+          room.status = 'waiting';
+          const passageInfo = getRandomPassage();
+          room.passage = passageInfo.passage;
+          room.levelId = passageInfo.levelId;
+
+          room.players.forEach((p) => {
+            p.progress = 0;
+            p.wpm = 0;
+            p.finished = false;
+            delete p.rank;
+            delete p.accuracy;
+            delete p.timeMs;
+          });
+
+          broadcastToRoom(room, { type: 'room_state' });
+        }
+        break;
+      }
     }
   } catch (e) {
     console.error('Message parsing failure:', e);

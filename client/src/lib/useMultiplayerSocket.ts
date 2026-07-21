@@ -64,6 +64,7 @@ export function useMultiplayerSocket() {
   const avatarIdRef = useRef(avatarId);
   const roomRef = useRef<Room | null>(null);
   const isRacingRef = useRef(false);
+  const hasFinishedRef = useRef(false);
 
   usernameRef.current = username;
   avatarIdRef.current = avatarId;
@@ -87,7 +88,8 @@ export function useMultiplayerSocket() {
   };
 
   const startRaceLocal = (_passageText?: string) => {
-    if (isRacingRef.current) return;
+    if (isRacingRef.current || hasFinishedRef.current) return;
+    hasFinishedRef.current = false;
     setTyped('');
     setElapsedMs(0);
     setStartedAt(Date.now());
@@ -109,6 +111,7 @@ export function useMultiplayerSocket() {
       case 'room_created':
         setMatchState('room');
         setCountdown(null);
+        hasFinishedRef.current = false;
         if (msg.roomCode) {
           copyInviteLink(msg.roomCode, `✅ Room ${msg.roomCode} created! Invite link copied to clipboard.`);
         }
@@ -116,7 +119,13 @@ export function useMultiplayerSocket() {
       case 'room_state':
         setRoom(msg.room);
         setMatchState('room');
-        if (msg.room?.status === 'racing' && !isRacingRef.current) {
+        if (msg.room?.status === 'waiting') {
+          hasFinishedRef.current = false;
+          setIsRacing(false);
+          setTyped('');
+          setCompletedStats(null);
+          setElapsedMs(0);
+        } else if (msg.room?.status === 'racing' && !isRacingRef.current && !hasFinishedRef.current) {
           startRaceLocal(msg.room.passage);
         }
         break;
@@ -124,6 +133,7 @@ export function useMultiplayerSocket() {
         if (msg.room) setRoom(msg.room);
         setCountdown(msg.seconds);
         setMatchState('room');
+        hasFinishedRef.current = false;
         break;
       case 'countdown_update':
         setCountdown(msg.seconds);
@@ -134,7 +144,7 @@ export function useMultiplayerSocket() {
         setCountdown(null);
         setMatchState('room');
         if (msg.room) setRoom(msg.room);
-        if (!isRacingRef.current) {
+        if (!isRacingRef.current && !hasFinishedRef.current) {
           startRaceLocal(msg.room?.passage || roomRef.current?.passage);
         }
         break;
@@ -148,6 +158,7 @@ export function useMultiplayerSocket() {
         setCountdown(null);
         setTyped('');
         setCompletedStats(null);
+        hasFinishedRef.current = false;
         break;
       case 'error':
         setErrorMessage(msg.message);
@@ -197,6 +208,7 @@ export function useMultiplayerSocket() {
       setMatchState('idle');
       setRoom(null);
       setIsRacing(false);
+      hasFinishedRef.current = false;
     };
   };
 
@@ -218,44 +230,6 @@ export function useMultiplayerSocket() {
     }
   }, [wsStatus, initialRoomCode, matchState]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Local race timer
-  useEffect(() => {
-    if (!isRacing || startedAt === null) return undefined;
-    const interval = window.setInterval(() => {
-      setElapsedMs(Date.now() - startedAt);
-    }, 100);
-    return () => window.clearInterval(interval);
-  }, [isRacing, startedAt]);
-
-  // Actions
-  const joinQueue = () => {
-    setErrorMessage(null);
-    sendWSMessage({ type: 'join_queue', username: usernameRef.current, avatarId: avatarIdRef.current });
-  };
-
-  const leaveQueue = () => {
-    sendWSMessage({ type: 'leave_queue' });
-  };
-
-  const createRoom = () => {
-    setErrorMessage(null);
-    sendWSMessage({ type: 'create_room', username: usernameRef.current, avatarId: avatarIdRef.current });
-  };
-
-  const joinRoom = (code: string) => {
-    if (!code.trim()) return;
-    setErrorMessage(null);
-    sendWSMessage({ type: 'join_room', roomCode: code.toUpperCase(), username: usernameRef.current, avatarId: avatarIdRef.current });
-  };
-
-  const startCustomRace = () => {
-    sendWSMessage({ type: 'start_custom_race' });
-  };
-
-  const leaveRoom = () => {
-    sendWSMessage({ type: 'leave_room' });
-  };
-
   const calculateAccuracy = (passage?: string, currentTyped?: string) => {
     const safePassage = passage || '';
     const safeTyped = currentTyped || '';
@@ -274,8 +248,83 @@ export function useMultiplayerSocket() {
     return Math.round((safeTyped.length / 5) / (safeTime / 1000 / 60));
   };
 
+  // Local race timer + 45s MAX limit auto-finish
+  useEffect(() => {
+    if (!isRacing || startedAt === null || hasFinishedRef.current) return undefined;
+    const interval = window.setInterval(() => {
+      const currentElapsed = Date.now() - startedAt;
+      setElapsedMs(currentElapsed);
+
+      // 45 seconds MAX race limit auto-finish
+      if (currentElapsed >= 45000 && !hasFinishedRef.current) {
+        hasFinishedRef.current = true;
+        const passage = roomRef.current?.passage || '';
+        const currentWpm = calculateWpm(typed, currentElapsed);
+        const currentAcc = calculateAccuracy(passage, typed);
+
+        setIsRacing(false);
+        setCompletedStats({
+          wpm: currentWpm,
+          accuracy: currentAcc,
+          timeMs: currentElapsed,
+        });
+
+        sendWSMessage({
+          type: 'race_finish',
+          wpm: currentWpm,
+          accuracy: currentAcc,
+          elapsedMs: currentElapsed,
+        });
+      }
+    }, 100);
+    return () => window.clearInterval(interval);
+  }, [isRacing, startedAt, typed]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Actions
+  const joinQueue = () => {
+    setErrorMessage(null);
+    hasFinishedRef.current = false;
+    sendWSMessage({ type: 'join_queue', username: usernameRef.current, avatarId: avatarIdRef.current });
+  };
+
+  const leaveQueue = () => {
+    sendWSMessage({ type: 'leave_queue' });
+  };
+
+  const createRoom = () => {
+    setErrorMessage(null);
+    hasFinishedRef.current = false;
+    sendWSMessage({ type: 'create_room', username: usernameRef.current, avatarId: avatarIdRef.current });
+  };
+
+  const joinRoom = (code: string) => {
+    if (!code.trim()) return;
+    setErrorMessage(null);
+    hasFinishedRef.current = false;
+    sendWSMessage({ type: 'join_room', roomCode: code.toUpperCase(), username: usernameRef.current, avatarId: avatarIdRef.current });
+  };
+
+  const startCustomRace = () => {
+    hasFinishedRef.current = false;
+    sendWSMessage({ type: 'start_custom_race' });
+  };
+
+  const rematch = () => {
+    hasFinishedRef.current = false;
+    isRacingRef.current = false;
+    setTyped('');
+    setCompletedStats(null);
+    setIsRacing(false);
+    setElapsedMs(0);
+    sendWSMessage({ type: 'rematch' });
+  };
+
+  const leaveRoom = () => {
+    sendWSMessage({ type: 'leave_room' });
+  };
+
   const handleInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    if (!room || (!isRacing && room.status !== 'racing')) return;
+    if (!room || (!isRacing && room.status !== 'racing') || hasFinishedRef.current) return;
     const passage = room.passage || '';
     const nextValue = e.target.value.slice(0, passage.length);
     setTyped(nextValue);
@@ -291,6 +340,7 @@ export function useMultiplayerSocket() {
     });
 
     if (nextValue === passage && passage.length > 0) {
+      hasFinishedRef.current = true;
       const acc = calculateAccuracy(passage, nextValue);
       setIsRacing(false);
       setCompletedStats({
@@ -334,6 +384,7 @@ export function useMultiplayerSocket() {
     createRoom,
     joinRoom,
     startCustomRace,
+    rematch,
     leaveRoom,
     copyInviteLink,
     handleInput,

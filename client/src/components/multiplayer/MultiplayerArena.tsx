@@ -2,6 +2,7 @@ import type { ChangeEvent, RefObject } from 'react';
 import type { Room } from '../../lib/useMultiplayerSocket';
 import RaceTrack from '../game/RaceTrack';
 import TypingPrompt from './TypingPrompt';
+import ResultModal from './ResultModal';
 
 type MultiplayerArenaProps = {
   room: Room;
@@ -12,9 +13,11 @@ type MultiplayerArenaProps = {
   completedStats: { wpm: number; accuracy: number; timeMs: number } | null;
   textareaRef: RefObject<HTMLTextAreaElement | null>;
   isHost: boolean;
+  currentUsername: string;
   onCopyInviteLink: (code?: string) => void;
   onLeaveRoom: () => void;
   onStartCustomRace: () => void;
+  onRematch: () => void;
   onHandleInput: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   calculateWpm: (typed?: string, timeMs?: number) => number;
   calculateAccuracy: (passage?: string, typed?: string) => number;
@@ -29,9 +32,11 @@ export default function MultiplayerArena({
   completedStats,
   textareaRef,
   isHost,
+  currentUsername,
   onCopyInviteLink,
   onLeaveRoom,
   onStartCustomRace,
+  onRematch,
   onHandleInput,
   calculateWpm,
   calculateAccuracy,
@@ -39,12 +44,28 @@ export default function MultiplayerArena({
   const hostPlayer = room.players.find((p) => p.isHost);
   const currentPassage = room.passage || 'Deep in the Whispering Woods, a rogue shadows the sleeping dragon, waiting for the crystal to glow.';
 
+  // Player's finished rank or live placement
+  const currentPlayerInRoom = room.players.find((p) => p.username === currentUsername);
+  const userRank = currentPlayerInRoom?.rank || (completedStats ? 1 : 1);
+
   const handleContainerClick = () => {
     textareaRef.current?.focus();
   };
 
+  const remainingSeconds = Math.max(0, Math.ceil((45000 - elapsedMs) / 1000));
+
   return (
     <div className="space-y-6">
+      {/* Result Modal display when finished or player completed */}
+      {(completedStats || room.status === 'finished') && (
+        <ResultModal
+          stats={completedStats || (currentPlayerInRoom ? { wpm: currentPlayerInRoom.wpm, accuracy: currentPlayerInRoom.accuracy || 100, timeMs: currentPlayerInRoom.timeMs || elapsedMs } : null)}
+          rank={userRank}
+          onRematch={onRematch}
+          onLeaveRoom={onLeaveRoom}
+        />
+      )}
+
       {/* Room Code Banner & Navigation */}
       <div className="flex items-center justify-between border-b border-slate-900 pb-4">
         <div className="flex items-center gap-3">
@@ -173,9 +194,9 @@ export default function MultiplayerArena({
 
             <div className="rounded-2xl bg-[#080d1e]/90 p-4 text-center border border-slate-800/80 border-t-2 border-t-indigo-400 shadow-[0_0_25px_rgba(99,102,241,0.08)] backdrop-blur-md">
               <span className="text-[10px] font-black uppercase tracking-[0.15em] text-indigo-400">
-                ⏱️ Elapsed Time
+                ⏱️ Race Limit ({remainingSeconds}s)
               </span>
-              <p className="text-2xl font-black font-mono text-indigo-300 mt-1 drop-shadow-[0_0_10px_rgba(99,102,241,0.4)]">
+              <p className={`text-2xl font-black font-mono mt-1 ${remainingSeconds <= 10 ? 'text-rose-400 animate-pulse' : 'text-indigo-300'}`}>
                 {((completedStats ? completedStats.timeMs : elapsedMs) / 1000).toFixed(1)}s
               </p>
             </div>
@@ -189,7 +210,7 @@ export default function MultiplayerArena({
           />
 
           {/* Integrated Hidden/Overlay Textarea */}
-          {room.status !== 'finished' && (
+          {!completedStats && room.status !== 'finished' && (
             <div className="relative">
               <textarea
                 ref={textareaRef}

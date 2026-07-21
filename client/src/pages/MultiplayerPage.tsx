@@ -27,6 +27,7 @@ export default function MultiplayerPage() {
     createRoom,
     joinRoom,
     startCustomRace,
+    rematch,
     leaveRoom,
     copyInviteLink,
     handleInput,
@@ -127,9 +128,11 @@ export default function MultiplayerPage() {
             completedStats={completedStats}
             textareaRef={textareaRef}
             isHost={isHost}
+            currentUsername={username}
             onCopyInviteLink={copyInviteLink}
             onLeaveRoom={leaveRoom}
             onStartCustomRace={startCustomRace}
+            onRematch={rematch}
             onHandleInput={handleInput}
             calculateWpm={calculateWpm}
             calculateAccuracy={calculateAccuracy}
