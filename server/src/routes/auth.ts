@@ -172,6 +172,44 @@ router.post('/avatar', requireAuth, async (req: any, res) => {
   }
 });
 
+// ─── POST /username ─────────────────────────────────────────────────────────
+router.post('/username', requireAuth, async (req: any, res) => {
+  const { username } = req.body;
+  if (!username) {
+    return res.status(400).json({ error: 'Username is required' });
+  }
+
+  const trimmed = username.trim();
+  if (trimmed.length < 3 || trimmed.length > 20) {
+    return res.status(400).json({ error: 'Username must be between 3 and 20 characters' });
+  }
+  if (!/^[a-zA-Z0-9_]+$/.test(trimmed)) {
+    return res.status(400).json({ error: 'Username may only contain letters, numbers, and underscores' });
+  }
+
+  try {
+    const db = await getDatabase();
+
+    // Check uniqueness (case-insensitive), excluding current user
+    const existing = await db.collection('users').findOne({
+      username: { $regex: new RegExp(`^${trimmed}$`, 'i') },
+      _id: { $ne: new ObjectId(req.user.id) },
+    });
+    if (existing) {
+      return res.status(400).json({ error: 'Username is already taken' });
+    }
+
+    await db.collection('users').updateOne(
+      { _id: new ObjectId(req.user.id) },
+      { $set: { username: trimmed } }
+    );
+    return res.json({ success: true, username: trimmed });
+  } catch (error) {
+    console.error('Failed to update username:', error);
+    return res.status(500).json({ error: 'Failed to update username' });
+  }
+});
+
 // ─── POST /oauth-register ───────────────────────────────────────────────────
 router.post('/oauth-register', async (req, res) => {
   const { idToken, provider, avatarId } = req.body;

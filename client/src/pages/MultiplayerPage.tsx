@@ -27,9 +27,10 @@ type Room = {
 export default function MultiplayerPage() {
   const { user } = useAuth();
   
-  // Connection states
+  // Connection lifecycle: 'connecting' during handshake, 'connected' on open,
+  // 'failed' only after a confirmed onerror or unexpected close.
   const wsRef = useRef<WebSocket | null>(null);
-  const [connected, setConnected] = useState(false);
+  const [wsStatus, setWsStatus] = useState<'connecting' | 'connected' | 'failed'>('connecting');
   const [matchState, setMatchState] = useState<'idle' | 'matching' | 'room'>('idle');
   const [queueCount, setQueueCount] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -51,13 +52,26 @@ export default function MultiplayerPage() {
   const username = user?.username || 'Guest Hero';
   const avatarId = user?.avatarId || 'knight';
 
-  // Connect to native websocket on mount
+  // ── Stable refs ─────────────────────────────────────────────────────────
+  // Kept in sync on every render so the long-lived WebSocket handlers always
+  // read the latest values without needing to reconnect when they change.
+  const usernameRef = useRef(username);
+  const avatarIdRef = useRef(avatarId);
+  const roomRef = useRef<Room | null>(null);
+  usernameRef.current = username;
+  avatarIdRef.current = avatarId;
+  roomRef.current = room;
+
+  // ── WebSocket — created ONCE on mount, never recreated ─────────────────
+  // Using empty deps [] ensures only one socket exists at a time.
+  // All values the socket handlers need are read via refs (usernameRef etc.)
+  // so they always have the latest value without triggering a reconnect.
   useEffect(() => {
     const ws = new WebSocket(`${WS_BASE}/multiplayer`);
     wsRef.current = ws;
 
     ws.onopen = () => {
-      setConnected(true);
+      setWsStatus('connected');
       setErrorMessage(null);
     };
 
@@ -71,23 +85,40 @@ export default function MultiplayerPage() {
     };
 
     ws.onerror = () => {
-      setErrorMessage('Connection to multiplayer server failed.');
+      // Only transition to 'failed' if we were still connecting.
+      // Only show the error message when we actually fail.
+      setWsStatus((prev) => {
+        if (prev === 'connecting') {
+          setErrorMessage('Connection to multiplayer server failed.');
+          return 'failed';
+        }
+        return prev;
+      });
     };
 
-    ws.onclose = () => {
-      setConnected(false);
+    ws.onclose = (evt) => {
+      // Surface a failure only on unexpected mid-session drops.
+      setWsStatus((prev) => {
+        if (prev === 'connected' && !evt.wasClean) {
+          setErrorMessage('Lost connection to multiplayer server.');
+          return 'failed';
+        }
+        return prev;
+      });
       setMatchState('idle');
       setRoom(null);
       setIsRacing(false);
     };
 
     return () => {
+      // Use CLOSING/OPEN check; the cleanup close is intentional (wasClean=true)
+      // so onclose will NOT transition to 'failed'.
       if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
-        ws.close();
+        ws.close(1000, 'component unmounted');
       }
       if (timerRef.current) window.clearInterval(timerRef.current);
     };
-  }, [username, avatarId]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Timer logic for local elapsed time
   useEffect(() => {
@@ -121,7 +152,6 @@ export default function MultiplayerPage() {
       case 'room_state':
         setRoom(msg.room);
         setMatchState('room');
-        // If race status shifted to racing, unlock
         if (msg.room.status === 'racing') {
           startRaceLocal(msg.room.passage);
         }
@@ -135,7 +165,9 @@ export default function MultiplayerPage() {
         break;
       case 'race_start':
         setCountdown(null);
-        if (room) startRaceLocal(room.passage);
+        // Use roomRef so we always have the latest room, not the stale
+        // closure value captured when the effect first ran.
+        if (roomRef.current) startRaceLocal(roomRef.current.passage);
         break;
       case 'race_results':
         setRoom(msg.room);
@@ -154,10 +186,11 @@ export default function MultiplayerPage() {
     }
   };
 
-  // Lobby actions
+  // Lobby actions — read username/avatarId from refs so we always send the
+  // latest values without needing to recreate the WebSocket connection.
   const joinQueue = () => {
     setErrorMessage(null);
-    sendWSMessage({ type: 'join_queue', username, avatarId });
+    sendWSMessage({ type: 'join_queue', username: usernameRef.current, avatarId: avatarIdRef.current });
   };
 
   const leaveQueue = () => {
@@ -166,13 +199,13 @@ export default function MultiplayerPage() {
 
   const createRoom = () => {
     setErrorMessage(null);
-    sendWSMessage({ type: 'create_room', username, avatarId });
+    sendWSMessage({ type: 'create_room', username: usernameRef.current, avatarId: avatarIdRef.current });
   };
 
   const joinRoom = (code: string) => {
     if (!code.trim()) return;
     setErrorMessage(null);
-    sendWSMessage({ type: 'join_room', roomCode: code, username, avatarId });
+    sendWSMessage({ type: 'join_room', roomCode: code, username: usernameRef.current, avatarId: avatarIdRef.current });
   };
 
   const startCustomRace = () => {
@@ -328,20 +361,55 @@ export default function MultiplayerPage() {
         </div>
       )}
 
-      {/* WEBSOCKET OFFLINE BANNER */}
-      {!connected && (
-        <div className="mb-6 rounded-2xl border border-yellow-500/30 bg-yellow-500/5 p-6 text-center backdrop-blur-md">
-          <span className="text-3xl">🔌</span>
-          <h2 className="text-lg font-black text-yellow-400 uppercase tracking-widest mt-2">
-            Multiplayer Server Offline
-          </h2>
-          <p className="mt-1.5 text-xs text-slate-500 max-w-md mx-auto">
-            The real-time multiplayer server is currently offline or loading. Please start the backend server at `http://localhost:4000` to unlock multiplayer races.
-          </p>
+      {/* ── CONNECTING: initial handshake spinner ─────────────────────── */}
+      {wsStatus === 'connecting' && (
+        <div className="flex flex-col items-center justify-center min-h-[50vh] gap-5">
+          <div className="relative h-16 w-16">
+            <div className="absolute inset-0 rounded-full border-4 border-slate-800" />
+            <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-cyan-400 border-r-indigo-400 animate-spin" />
+            <div className="absolute inset-0 flex items-center justify-center text-2xl">⚔️</div>
+          </div>
+          <div className="text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-400 animate-pulse">Connecting to Arena…</p>
+            <p className="mt-1 text-xs text-slate-600">Establishing real-time connection</p>
+          </div>
         </div>
       )}
 
-      {connected && matchState === 'idle' && (
+      {/* ── FAILED: confirmed server unreachable ──────────────────────── */}
+      {wsStatus === 'failed' && (
+        <div className="mb-6 rounded-2xl border border-red-500/30 bg-red-500/5 p-8 text-center backdrop-blur-md">
+          <span className="text-4xl">🔌</span>
+          <h2 className="text-lg font-black text-red-400 uppercase tracking-widest mt-3">
+            Multiplayer Unavailable
+          </h2>
+          <p className="mt-2 text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
+            Could not reach the real-time multiplayer server. Please check your connection or try again in a moment.
+          </p>
+          <button
+            onClick={() => {
+              setWsStatus('connecting');
+              setErrorMessage(null);
+              const ws = new WebSocket(`${WS_BASE}/multiplayer`);
+              wsRef.current = ws;
+              ws.onopen = () => { setWsStatus('connected'); setErrorMessage(null); };
+              ws.onerror = () => { setWsStatus('failed'); setErrorMessage('Connection to multiplayer server failed.'); };
+              ws.onclose = (e) => {
+                setWsStatus((p) => (p === 'connected' && !e.wasClean ? 'failed' : p));
+                setMatchState('idle'); setRoom(null); setIsRacing(false);
+              };
+              ws.onmessage = (event) => {
+                try { handleSocketMessage(JSON.parse(event.data)); } catch {}
+              };
+            }}
+            className="mt-5 px-6 py-2.5 rounded-xl bg-red-500/10 border border-red-500/30 hover:bg-red-500/15 text-red-400 text-xs font-bold uppercase tracking-widest cursor-pointer transition-colors"
+          >
+            Retry Connection
+          </button>
+        </div>
+      )}
+
+      {wsStatus === 'connected' && matchState === 'idle' && (
         /* ─── LOBBY LANDING SCREEN ─── */
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
           
@@ -399,7 +467,7 @@ export default function MultiplayerPage() {
         </div>
       )}
 
-      {connected && matchState === 'matching' && (
+      {wsStatus === 'connected' && matchState === 'matching' && (
         /* ─── MATCHMAKING WAIT SCREEN ─── */
         <div className="max-w-md mx-auto text-center rounded-2xl border border-slate-800 bg-[#0a0e1c]/80 p-8 backdrop-blur-md">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent mx-auto mb-4" />
@@ -418,7 +486,7 @@ export default function MultiplayerPage() {
         </div>
       )}
 
-      {connected && matchState === 'room' && room && (
+      {wsStatus === 'connected' && matchState === 'room' && room && (
         /* ─── ROOM GAME INTERFACE ─── */
         <div className="space-y-6">
           {/* Room Code Banner & Navigation */}

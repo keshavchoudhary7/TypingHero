@@ -25,6 +25,7 @@ type AuthContextType = {
   registerWithOAuth: (providerName: 'google', avatarId?: string) => Promise<boolean>;
   logout: () => void;
   updateAvatar: (avatarId: string) => Promise<boolean>;
+  updateUsername: (username: string) => Promise<boolean>;
   clearError: () => void;
 };
 
@@ -169,6 +170,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const updateUsername = async (username: string): Promise<boolean> => {
+    if (!token) return false;
+    try {
+      const response = await fetch(`${API_BASE}/api/auth/username`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ username }),
+      });
+
+      if (response.ok) {
+        setUser((prev) => (prev ? { ...prev, username } : null));
+        return true;
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  };
+
   const loginWithOAuth = async (providerName: 'google'): Promise<boolean> => {
     setError(null);
     setLoading(true);
@@ -253,6 +276,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         registerWithOAuth,
         logout,
         updateAvatar,
+        updateUsername,
         clearError,
       }}
     >
