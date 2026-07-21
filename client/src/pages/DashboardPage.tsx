@@ -47,16 +47,16 @@ const getArenaTier = (accuracy: number) => {
 };
 
 const tierConfig: Record<string, { color: string; bg: string; border: string; icon: string }> = {
-  Champion: { color: '#ffd700', bg: 'rgba(255,215,0,0.08)',  border: 'rgba(255,215,0,0.25)',  icon: '👑' },
-  Elite:    { color: '#00f5ff', bg: 'rgba(0,245,255,0.08)',  border: 'rgba(0,245,255,0.25)',  icon: '💠' },
-  Pro:      { color: '#bf5fff', bg: 'rgba(191,95,255,0.08)', border: 'rgba(191,95,255,0.25)', icon: '🔮' },
-  Rookie:   { color: '#94a3b8', bg: 'rgba(100,116,139,0.08)', border: 'rgba(100,116,139,0.25)', icon: '🎮' },
+  Champion: { color: '#ffd700', bg: 'rgba(255,215,0,0.08)', border: 'rgba(255,215,0,0.25)', icon: '👑' },
+  Elite: { color: '#00f5ff', bg: 'rgba(0,245,255,0.08)', border: 'rgba(0,245,255,0.25)', icon: '💠' },
+  Pro: { color: '#bf5fff', bg: 'rgba(191,95,255,0.08)', border: 'rgba(191,95,255,0.25)', icon: '🔮' },
+  Rookie: { color: '#94a3b8', bg: 'rgba(100,116,139,0.08)', border: 'rgba(100,116,139,0.25)', icon: '🎮' },
 };
 
 const achievementStateColor: Record<Achievement['state'], string> = {
   Bronze: '#cd7f32',
   Silver: '#c0c0c0',
-  Gold:   '#ffd700',
+  Gold: '#ffd700',
   Heroic: '#ff3cac',
   Unlocked: '#39ff14',
 };
@@ -121,7 +121,7 @@ function DashboardPage() {
         const levelId = Number(lvlStr);
         const wpm = Number(wpmStr);
         const accuracy = Number(accStr);
-        
+
         if (!isNaN(levelId) && challenger && !isNaN(wpm) && !isNaN(accuracy)) {
           setChallengeData({
             levelId,
@@ -308,7 +308,8 @@ function DashboardPage() {
     const anim = gsap.fromTo(
       winRef.current,
       { scale: 0.7, opacity: 0 },
-      { duration: 0.6, scale: 1, opacity: 1, ease: 'elastic.out(1, 0.6)',
+      {
+        duration: 0.6, scale: 1, opacity: 1, ease: 'elastic.out(1, 0.6)',
         onComplete: () => { gsap.to(winRef.current, { duration: 0.3, scale: 1.05, repeat: 1, yoyo: true }); },
       },
     );
@@ -385,7 +386,7 @@ function DashboardPage() {
     const nextValue = event.target.value.slice(0, passage.length);
     const currentElapsed = isRunning ? Date.now() - (startedAt ?? Date.now()) : elapsedMs;
     const nextStats = calculateStats({ passage, typed: nextValue, elapsedMs: currentElapsed });
-    
+
     // Log keypress timings for anti-cheat verification
     if (nextValue.length > typed.length) {
       const offset = startedAt ? Date.now() - startedAt : 0;
@@ -434,7 +435,7 @@ function DashboardPage() {
       setDailyChallengeDoneDate(newDailyDone);
       setXpGain(gain);
       if (rankUp) setLeveledUp(rankUp);
-      
+
       // Calculate challenge outcome if active
       if (challengeData) {
         setChallengeResult({
@@ -529,456 +530,456 @@ function DashboardPage() {
 
   return (
     <>
-    <div ref={dashboardRef} className="relative min-h-screen overflow-hidden text-slate-100 grid-bg" style={{ background: '#050711' }}>
-      {/* Ambient orbs */}
-      <div className="ambient-orb pointer-events-none absolute -left-32 top-0 h-96 w-96 rounded-full blur-[100px]"
-        style={{ background: 'radial-gradient(circle, rgba(0,245,255,0.08) 0%, transparent 70%)' }} />
-      <div className="ambient-orb-2 pointer-events-none absolute -right-32 top-1/3 h-96 w-96 rounded-full blur-[100px]"
-        style={{ background: 'radial-gradient(circle, rgba(191,95,255,0.08) 0%, transparent 70%)' }} />
+      <div ref={dashboardRef} className="relative min-h-screen overflow-hidden text-slate-100 grid-bg" style={{ background: '#050711' }}>
+        {/* Ambient orbs */}
+        <div className="ambient-orb pointer-events-none absolute -left-32 top-0 h-96 w-96 rounded-full blur-[100px]"
+          style={{ background: 'radial-gradient(circle, rgba(0,245,255,0.08) 0%, transparent 70%)' }} />
+        <div className="ambient-orb-2 pointer-events-none absolute -right-32 top-1/3 h-96 w-96 rounded-full blur-[100px]"
+          style={{ background: 'radial-gradient(circle, rgba(191,95,255,0.08) 0%, transparent 70%)' }} />
 
-      {/* Victory popup */}
-      <VictoryPopup
-        visible={showVictoryPopup}
-        levels={challengePool}
-        completedLevels={completedLevels}
-        levelResults={levelResults}
-        activeLevelId={activeLevelId}
-        stats={victoryStats}
-        onClose={handleVictoryClose}
-        onSelectLevel={handleSelectLevel}
-        challengeResult={challengeResult}
-      />
+        {/* Victory popup */}
+        <VictoryPopup
+          visible={showVictoryPopup}
+          levels={challengePool}
+          completedLevels={completedLevels}
+          levelResults={levelResults}
+          activeLevelId={activeLevelId}
+          stats={victoryStats}
+          onClose={handleVictoryClose}
+          onSelectLevel={handleSelectLevel}
+          challengeResult={challengeResult}
+        />
 
-      {/* World map drawer */}
-      {showWorldMap && (
-        <div
-          className="fixed inset-0 z-40 flex items-start justify-end p-4 pt-20"
-          style={{ background: 'rgba(5,7,14,0.7)', backdropFilter: 'blur(8px)' }}
-          onClick={() => setShowWorldMap(false)}
-        >
+        {/* World map drawer */}
+        {showWorldMap && (
           <div
-            className="h-[80vh] w-full max-w-sm overflow-hidden rounded-2xl"
-            style={{ background: 'rgba(8,12,22,0.98)', border: '1px solid rgba(0,245,255,0.15)', boxShadow: '0 0 60px rgba(0,245,255,0.1)' }}
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 z-40 flex items-start justify-end p-4 pt-20"
+            style={{ background: 'rgba(5,7,14,0.7)', backdropFilter: 'blur(8px)' }}
+            onClick={() => setShowWorldMap(false)}
           >
-            <div className="flex items-center justify-between gap-3 px-4 py-3" style={{ borderBottom: '1px solid rgba(30,41,59,0.6)' }}>
-              <div className="flex items-center gap-2">
-                <span>🗺</span>
-                <span className="text-sm font-bold text-white">World Map</span>
-              </div>
-              <button onClick={() => setShowWorldMap(false)} className="text-xs text-slate-500 hover:text-slate-300">✕ Close</button>
-            </div>
-            <div className="h-[calc(80vh-3rem)] overflow-y-auto p-3">
-              <WorldMap
-                levels={challengePool}
-                completedLevels={completedLevels}
-                levelResults={levelResults}
-                activeLevelId={activeLevelId}
-                onSelectLevel={handleSelectLevel}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Win burst overlay */}
-      {showWinBurst && status === 'finished' ? (
-        <div ref={winRef} className="pointer-events-none absolute inset-x-0 top-24 z-40 mx-auto flex w-full justify-center opacity-0">
-          <div className="rounded-2xl px-10 py-5 text-center backdrop-blur-xl"
-            style={{ background: 'rgba(0,245,255,0.06)', border: '1px solid rgba(0,245,255,0.3)', boxShadow: '0 0 60px rgba(0,245,255,0.2)' }}>
-            <p className="text-xs font-bold uppercase tracking-[0.4em]" style={{ color: '#00f5ff' }}>⚡ Victory</p>
-            <p className="mt-2 text-4xl font-black text-white" style={{ textShadow: '0 0 20px rgba(0,245,255,0.5)' }}>Level Complete!</p>
-            {newPB && <p className="mt-1 text-sm font-bold" style={{ color: '#ffb703', textShadow: '0 0 10px rgba(255,183,3,0.5)' }}>🏆 New Personal Best!</p>}
-          </div>
-        </div>
-      ) : null}
-
-      <div className="relative mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-
-        {/* ─── HEADER ─── */}
-        <header className="relative mb-5 overflow-hidden rounded-2xl p-5"
-          style={{ background: 'rgba(10,14,28,0.85)', border: '1px solid rgba(0,245,255,0.1)', backdropFilter: 'blur(24px)', boxShadow: '0 0 60px rgba(0,245,255,0.05), inset 0 1px 0 rgba(255,255,255,0.03)' }}>
-          <div className="absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(0,245,255,0.5), rgba(191,95,255,0.4), transparent)' }} />
-          <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl text-2xl"
-                style={{ background: 'linear-gradient(135deg, rgba(0,245,255,0.15), rgba(191,95,255,0.1))', border: '1px solid rgba(0,245,255,0.25)', boxShadow: '0 0 20px rgba(0,245,255,0.15)' }}>
-                ⌨️
-              </div>
-              <div>
+            <div
+              className="h-[80vh] w-full max-w-sm overflow-hidden rounded-2xl"
+              style={{ background: 'rgba(8,12,22,0.98)', border: '1px solid rgba(0,245,255,0.15)', boxShadow: '0 0 60px rgba(0,245,255,0.1)' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between gap-3 px-4 py-3" style={{ borderBottom: '1px solid rgba(30,41,59,0.6)' }}>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold uppercase tracking-[0.3em]" style={{ color: '#00f5ff', textShadow: '0 0 8px rgba(0,245,255,0.5)' }}>TypingHero</span>
-                  <span className="rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest" style={{ background: 'rgba(191,95,255,0.12)', border: '1px solid rgba(191,95,255,0.3)', color: '#bf5fff' }}>Battle Arena</span>
+                  <span>🗺</span>
+                  <span className="text-sm font-bold text-white">World Map</span>
                 </div>
-                <div className="mt-1 flex items-center gap-2">
-                  <span className="live-dot h-1.5 w-1.5 rounded-full bg-emerald-400" style={{ boxShadow: '0 0 6px #39ff14' }} />
-                  <span className="text-xs text-slate-500">{isSavingProgress ? 'Saving...' : 'Live · Synced'}</span>
-                </div>
+                <button onClick={() => setShowWorldMap(false)} className="text-xs text-slate-500 hover:text-slate-300">✕ Close</button>
+              </div>
+              <div className="h-[calc(80vh-3rem)] overflow-y-auto p-3">
+                <WorldMap
+                  levels={challengePool}
+                  completedLevels={completedLevels}
+                  levelResults={levelResults}
+                  activeLevelId={activeLevelId}
+                  onSelectLevel={handleSelectLevel}
+                />
               </div>
             </div>
+          </div>
+        )}
 
-            <div className="flex flex-wrap items-center gap-3">
-              {/* Achievement badges */}
-              {achievements.length > 0 && (
-                <div className="flex items-center gap-1.5">
-                  {achievements.slice(0, 4).map((ach) => (
-                    <div
-                      key={ach.id}
-                      title={`${ach.title}: ${ach.description}`}
-                      className="flex h-8 w-8 items-center justify-center rounded-full text-sm cursor-help"
-                      style={{ background: `${achievementStateColor[ach.state]}15`, border: `1px solid ${achievementStateColor[ach.state]}40`, boxShadow: `0 0 8px ${achievementStateColor[ach.state]}30` }}
-                    >
-                      {ach.icon}
+        {/* Win burst overlay */}
+        {showWinBurst && status === 'finished' ? (
+          <div ref={winRef} className="pointer-events-none absolute inset-x-0 top-24 z-40 mx-auto flex w-full justify-center opacity-0">
+            <div className="rounded-2xl px-10 py-5 text-center backdrop-blur-xl"
+              style={{ background: 'rgba(0,245,255,0.06)', border: '1px solid rgba(0,245,255,0.3)', boxShadow: '0 0 60px rgba(0,245,255,0.2)' }}>
+              <p className="text-xs font-bold uppercase tracking-[0.4em]" style={{ color: '#00f5ff' }}>⚡ Victory</p>
+              <p className="mt-2 text-4xl font-black text-white" style={{ textShadow: '0 0 20px rgba(0,245,255,0.5)' }}>Level Complete!</p>
+              {newPB && <p className="mt-1 text-sm font-bold" style={{ color: '#ffb703', textShadow: '0 0 10px rgba(255,183,3,0.5)' }}>🏆 New Personal Best!</p>}
+            </div>
+          </div>
+        ) : null}
+
+        <div className="relative mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+
+          {/* ─── HEADER ─── */}
+          <header className="relative mb-5 overflow-hidden rounded-2xl p-5"
+            style={{ background: 'rgba(10,14,28,0.85)', border: '1px solid rgba(0,245,255,0.1)', backdropFilter: 'blur(24px)', boxShadow: '0 0 60px rgba(0,245,255,0.05), inset 0 1px 0 rgba(255,255,255,0.03)' }}>
+            <div className="absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(0,245,255,0.5), rgba(191,95,255,0.4), transparent)' }} />
+            <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl text-2xl"
+                  style={{ background: 'linear-gradient(135deg, rgba(0,245,255,0.15), rgba(191,95,255,0.1))', border: '1px solid rgba(0,245,255,0.25)', boxShadow: '0 0 20px rgba(0,245,255,0.15)' }}>
+                  ⌨️
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold uppercase tracking-[0.3em]" style={{ color: '#00f5ff', textShadow: '0 0 8px rgba(0,245,255,0.5)' }}>TypingHeroes</span>
+                    <span className="rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest" style={{ background: 'rgba(191,95,255,0.12)', border: '1px solid rgba(191,95,255,0.3)', color: '#bf5fff' }}>Battle Arena</span>
+                  </div>
+                  <div className="mt-1 flex items-center gap-2">
+                    <span className="live-dot h-1.5 w-1.5 rounded-full bg-emerald-400" style={{ boxShadow: '0 0 6px #39ff14' }} />
+                    <span className="text-xs text-slate-500">{isSavingProgress ? 'Saving...' : 'Live · Synced'}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3">
+                {/* Achievement badges */}
+                {achievements.length > 0 && (
+                  <div className="flex items-center gap-1.5">
+                    {achievements.slice(0, 4).map((ach) => (
+                      <div
+                        key={ach.id}
+                        title={`${ach.title}: ${ach.description}`}
+                        className="flex h-8 w-8 items-center justify-center rounded-full text-sm cursor-help"
+                        style={{ background: `${achievementStateColor[ach.state]}15`, border: `1px solid ${achievementStateColor[ach.state]}40`, boxShadow: `0 0 8px ${achievementStateColor[ach.state]}30` }}
+                      >
+                        {ach.icon}
+                      </div>
+                    ))}
+                    {achievements.length > 4 && (
+                      <span className="text-xs text-slate-500">+{achievements.length - 4}</span>
+                    )}
+                  </div>
+                )}
+
+                {/* Milestone counter */}
+                <div className="rounded-xl px-4 py-2.5 text-center" style={{ background: 'rgba(0,245,255,0.05)', border: '1px solid rgba(0,245,255,0.15)' }}>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Progress</p>
+                  <p className="mt-0.5 text-xl font-black tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace", color: '#00f5ff', textShadow: '0 0 12px rgba(0,245,255,0.5)' }}>
+                    {completedLevels.length}<span className="text-base text-slate-600"> / {challengePool.length}</span>
+                  </p>
+                </div>
+
+                {/* M3: streak compact badge */}
+                <StreakBadge streak={streak} atRisk={streakAtRisk} compact />
+
+                {/* M3: hero rank chip */}
+                <div
+                  className="flex items-center gap-1.5 rounded-full px-3 py-1.5"
+                  style={{ background: `${heroRank.color}12`, border: `1px solid ${heroRank.color}35` }}
+                >
+                  <span style={{ fontSize: '0.85rem' }}>{heroRank.icon}</span>
+                  <span className="text-[10px] font-bold" style={{ color: heroRank.color }}>{heroRank.title}</span>
+                </div>
+
+                <PrimaryButton onClick={() => setShowWorldMap(true)} variant="purple">🗺 World Map</PrimaryButton>
+                <PrimaryButton onClick={() => setCurrentPage('achievements')} variant="dark">📈 Achievements</PrimaryButton>
+              </div>
+            </div>
+          </header>
+
+          {/* ─── MAIN GRID ─── */}
+          <div className="grid gap-5 xl:grid-cols-[1fr_300px]">
+
+            {/* ─── LEFT COLUMN ─── */}
+            <div className="flex flex-col gap-4">
+              {/* Friend Challenge Active Banner */}
+              {challengeData && (
+                <div className="flex items-center justify-between rounded-xl px-4 py-3 border border-indigo-500/30 bg-indigo-500/10 shadow-[0_0_15px_rgba(99,102,241,0.1)]">
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-lg">⚔️</span>
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-white uppercase tracking-wider">
+                        Challenge Active: Beat {challengeData.challengerName}
+                      </p>
+                      <p className="text-[10px] text-slate-400 font-semibold mt-0.5">
+                        Target: <span className="text-indigo-400 font-bold font-mono">{challengeData.wpm} WPM</span> at {challengeData.accuracy}% accuracy.
+                      </p>
                     </div>
-                  ))}
-                  {achievements.length > 4 && (
-                    <span className="text-xs text-slate-500">+{achievements.length - 4}</span>
-                  )}
+                  </div>
+                  <button
+                    onClick={() => {
+                      setChallengeData(null);
+                      setChallengeResult(null);
+                    }}
+                    className="cursor-pointer rounded-lg border border-slate-700 bg-slate-900/60 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 hover:text-slate-200 hover:border-slate-500 transition-colors"
+                  >
+                    Cancel
+                  </button>
                 </div>
               )}
 
-              {/* Milestone counter */}
-              <div className="rounded-xl px-4 py-2.5 text-center" style={{ background: 'rgba(0,245,255,0.05)', border: '1px solid rgba(0,245,255,0.15)' }}>
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Progress</p>
-                <p className="mt-0.5 text-xl font-black tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace", color: '#00f5ff', textShadow: '0 0 12px rgba(0,245,255,0.5)' }}>
-                  {completedLevels.length}<span className="text-base text-slate-600"> / {challengePool.length}</span>
-                </p>
-              </div>
-
-              {/* M3: streak compact badge */}
-              <StreakBadge streak={streak} atRisk={streakAtRisk} compact />
-
-              {/* M3: hero rank chip */}
-              <div
-                className="flex items-center gap-1.5 rounded-full px-3 py-1.5"
-                style={{ background: `${heroRank.color}12`, border: `1px solid ${heroRank.color}35` }}
-              >
-                <span style={{ fontSize: '0.85rem' }}>{heroRank.icon}</span>
-                <span className="text-[10px] font-bold" style={{ color: heroRank.color }}>{heroRank.title}</span>
-              </div>
-
-              <PrimaryButton onClick={() => setShowWorldMap(true)} variant="purple">🗺 World Map</PrimaryButton>
-              <PrimaryButton onClick={() => setCurrentPage('achievements')} variant="dark">📈 Achievements</PrimaryButton>
-            </div>
-          </div>
-        </header>
-
-        {/* ─── MAIN GRID ─── */}
-        <div className="grid gap-5 xl:grid-cols-[1fr_300px]">
-
-          {/* ─── LEFT COLUMN ─── */}
-          <div className="flex flex-col gap-4">
-            {/* Friend Challenge Active Banner */}
-            {challengeData && (
-              <div className="flex items-center justify-between rounded-xl px-4 py-3 border border-indigo-500/30 bg-indigo-500/10 shadow-[0_0_15px_rgba(99,102,241,0.1)]">
-                <div className="flex items-center gap-2.5">
-                  <span className="text-lg">⚔️</span>
-                  <div className="min-w-0">
-                    <p className="text-xs font-bold text-white uppercase tracking-wider">
-                      Challenge Active: Beat {challengeData.challengerName}
-                    </p>
-                    <p className="text-[10px] text-slate-400 font-semibold mt-0.5">
-                      Target: <span className="text-indigo-400 font-bold font-mono">{challengeData.wpm} WPM</span> at {challengeData.accuracy}% accuracy.
-                    </p>
-                  </div>
+              {/* Status bar: tier row */}
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl px-4 py-3"
+                style={{ background: 'rgba(10,14,28,0.7)', border: '1px solid rgba(30,41,59,0.8)' }}>
+                <div className="flex items-center gap-3">
+                  <p className="text-xs font-bold uppercase tracking-widest text-slate-500">Arena</p>
+                  <span className="rounded-full px-3 py-1 text-xs font-bold"
+                    style={{ background: activeLevel.difficulty === 'Easy' ? 'rgba(57,255,20,0.1)' : activeLevel.difficulty === 'Hard' ? 'rgba(255,60,172,0.1)' : 'rgba(0,245,255,0.1)', border: `1px solid ${activeLevel.difficulty === 'Easy' ? 'rgba(57,255,20,0.3)' : activeLevel.difficulty === 'Hard' ? 'rgba(255,60,172,0.3)' : 'rgba(0,245,255,0.3)'}`, color: activeLevel.difficulty === 'Easy' ? '#39ff14' : activeLevel.difficulty === 'Hard' ? '#ff3cac' : '#00f5ff' }}>
+                    {activeLevel.difficulty}
+                  </span>
+                  <span className="text-xs text-slate-500 hidden sm:inline">Lv.{activeLevel.id} · {activeLevel.title}</span>
                 </div>
-                <button
-                  onClick={() => {
-                    setChallengeData(null);
-                    setChallengeResult(null);
-                  }}
-                  className="cursor-pointer rounded-lg border border-slate-700 bg-slate-900/60 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 hover:text-slate-200 hover:border-slate-500 transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            )}
-
-            {/* Status bar: tier row */}
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl px-4 py-3"
-              style={{ background: 'rgba(10,14,28,0.7)', border: '1px solid rgba(30,41,59,0.8)' }}>
-              <div className="flex items-center gap-3">
-                <p className="text-xs font-bold uppercase tracking-widest text-slate-500">Arena</p>
-                <span className="rounded-full px-3 py-1 text-xs font-bold"
-                  style={{ background: activeLevel.difficulty === 'Easy' ? 'rgba(57,255,20,0.1)' : activeLevel.difficulty === 'Hard' ? 'rgba(255,60,172,0.1)' : 'rgba(0,245,255,0.1)', border: `1px solid ${activeLevel.difficulty === 'Easy' ? 'rgba(57,255,20,0.3)' : activeLevel.difficulty === 'Hard' ? 'rgba(255,60,172,0.3)' : 'rgba(0,245,255,0.3)'}`, color: activeLevel.difficulty === 'Easy' ? '#39ff14' : activeLevel.difficulty === 'Hard' ? '#ff3cac' : '#00f5ff' }}>
-                  {activeLevel.difficulty}
-                </span>
-                <span className="text-xs text-slate-500 hidden sm:inline">Lv.{activeLevel.id} · {activeLevel.title}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                {(['Champion', 'Elite', 'Pro', 'Rookie'] as const).map((tier) => {
-                  const t = tierConfig[tier];
-                  const isCurrent = rank === tier;
-                  return (
-                    <div key={tier} className="flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide transition-all duration-300"
-                      style={{ background: isCurrent ? t.bg : 'transparent', border: `1px solid ${isCurrent ? t.border : 'rgba(30,41,59,0.4)'}`, color: isCurrent ? t.color : 'rgba(100,116,139,0.3)', boxShadow: isCurrent ? `0 0 10px ${t.bg}` : 'none' }}>
-                      {isCurrent && <span>{t.icon}</span>}
-                      {tier}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Metrics: 5 tiles — WPM, Net WPM, Accuracy, Errors, Progress */}
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
-              <MetricTile label="WPM" value={stats.wpm} accent="cyan" subtitle="Gross" />
-              <MetricTile label="Net WPM" value={stats.netWpm} accent="violet" subtitle="Adjusted" />
-              <MetricTile label="Accuracy" value={`${stats.accuracy}%`} accent="emerald" subtitle="Precision" />
-              <MetricTile label="Errors" value={stats.incorrectChars} accent="rose" subtitle="Mistakes" />
-              <MetricTile label="Progress" value={`${progress}%`} accent="amber" subtitle="Completion" />
-            </div>
-
-            {/* Progress + Combo row */}
-            <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
-              <div className="rounded-xl p-4" style={{ background: 'rgba(10,14,28,0.8)', border: '1px solid rgba(30,41,59,0.7)' }}>
-                <div className="mb-2.5 flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase tracking-widest text-slate-500">Power Gauge — {activeLevel.title}</span>
-                  <span className="text-xs text-slate-500 tabular-nums">{typed.length}/{passage.length}</span>
-                </div>
-                <div className="relative h-2.5 overflow-hidden rounded-full" style={{ background: 'rgba(15,23,42,0.8)', border: '1px solid rgba(30,41,59,0.5)' }}>
-                  <div className="h-full rounded-full transition-all duration-300"
-                    style={{ width: `${Math.max(progress, 2)}%`, background: progress >= 90 ? 'linear-gradient(90deg, #ff3cac, #ffb703)' : progress >= 50 ? 'linear-gradient(90deg, #00f5ff, #bf5fff)' : 'linear-gradient(90deg, #00f5ff, #0ea5e9)', boxShadow: progress > 0 ? '0 0 8px rgba(0,245,255,0.4)' : 'none' }} />
-                  {isRunning && progress > 0 && (
-                    <div className="absolute inset-0 rounded-full opacity-30" style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%)', backgroundSize: '200% 100%', animation: 'shimmer 1.5s linear infinite' }} />
-                  )}
-                </div>
-                <p className="mt-1.5 text-xs text-slate-600">
-                  {status === 'finished' ? '✅ Challenge complete!' : status === 'running' ? '⚡ Keep going!' : status === 'paused' ? '⏸ Paused — resume when ready' : 'Start typing to begin the race'}
-                </p>
-              </div>
-              <div className="flex min-w-[110px] flex-col items-center justify-center rounded-xl p-4 text-center"
-                style={{ background: isComboHigh ? 'rgba(255,183,3,0.06)' : 'rgba(10,14,28,0.8)', border: `1px solid ${isComboHigh ? 'rgba(255,183,3,0.25)' : 'rgba(30,41,59,0.7)'}`, boxShadow: isComboHigh ? '0 0 20px rgba(255,183,3,0.15)' : 'none' }}>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Combo</p>
-                <p className={`text-4xl font-black tabular-nums ${isComboHigh ? 'combo-active' : ''}`}
-                  style={{ fontFamily: "'JetBrains Mono', monospace", color: isComboHigh ? '#ffb703' : '#bf5fff', textShadow: isComboHigh ? '0 0 15px rgba(255,183,3,0.7)' : '0 0 10px rgba(191,95,255,0.5)' }}>
-                  {combo}x
-                </p>
-                <p className="mt-1 text-[10px] text-slate-600">{isComboHigh ? '🔥 On fire!' : 'multiplier'}</p>
-              </div>
-            </div>
-
-            {/* ─── TYPING ARENA ─── */}
-            <div className="rounded-2xl p-5" style={{ background: 'rgba(8,12,22,0.95)', border: '1px solid rgba(0,245,255,0.1)', boxShadow: isRunning ? '0 0 30px rgba(0,245,255,0.06), inset 0 0 30px rgba(0,245,255,0.02)' : 'none', transition: 'box-shadow 0.5s' }}>
-              {/* Arena header */}
-              <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full"
-                    style={{ background: status === 'running' ? '#39ff14' : status === 'paused' ? '#ffb703' : status === 'finished' ? '#00f5ff' : '#475569', boxShadow: status === 'running' ? '0 0 8px #39ff14' : status === 'paused' ? '0 0 8px #ffb703' : 'none' }} />
-                  <span className="text-xs font-semibold uppercase tracking-widest text-slate-500">
-                    {isGeneratingActive ? 'Generating challenge...' : unlocked ? 'Active Challenge' : 'Locked'}
-                  </span>
-                </div>
-                {status === 'running' && (
-                  <span className="rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-widest"
-                    style={{ background: 'rgba(57,255,20,0.1)', border: '1px solid rgba(57,255,20,0.3)', color: '#39ff14', animation: 'live-pulse 1.2s ease-in-out infinite' }}>
-                    ● LIVE
-                  </span>
-                )}
-              </div>
-
-              {/* ─── Character-level word display ─── */}
-              <div className="mb-5 rounded-xl p-4" style={{ background: 'rgba(5,8,16,0.8)', border: '1px solid rgba(30,41,59,0.5)', minHeight: '5.5rem' }}>
-                <p className="flex flex-wrap gap-x-2 gap-y-2 leading-8" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1rem' }}>
-                  {charFeedback.map((segment, wIdx) => {
-                    const isActiveWord = segment.active;
-
-                    if (isActiveWord || segment.wordState === 'correct' || segment.wordState === 'incorrect') {
-                      // Render character-by-character
-                      return (
-                        <span
-                          key={`w-${wIdx}`}
-                          className="inline-flex items-center rounded-lg border px-1.5 py-0.5 transition-all duration-100"
-                          style={{
-                            borderColor: segment.wordState === 'correct' ? 'rgba(57,255,20,0.2)' : segment.wordState === 'incorrect' && !isActiveWord ? 'rgba(255,68,68,0.3)' : isActiveWord && segment.wordState === 'incorrect' ? 'rgba(255,68,68,0.3)' : isActiveWord ? 'rgba(191,95,255,0.25)' : 'transparent',
-                            background: segment.wordState === 'correct' ? 'rgba(57,255,20,0.05)' : segment.wordState === 'incorrect' && !isActiveWord ? 'rgba(255,68,68,0.08)' : isActiveWord ? 'rgba(191,95,255,0.07)' : 'transparent',
-                          }}
-                        >
-                          {'chars' in segment && segment.chars.map((c, ci) => {
-                            const isAtCursor = isActiveWord && 'cursorPos' in segment && ci === segment.cursorPos;
-                            return (
-                              <span key={ci} style={{ position: 'relative', display: 'inline-block' }}>
-                                {isAtCursor && (
-                                  <span style={{ position: 'absolute', left: 0, top: '10%', width: '2px', height: '80%', background: '#00f5ff', boxShadow: '0 0 6px #00f5ff', borderRadius: '1px', animation: 'cursor-blink 1s ease-in-out infinite' }} />
-                                )}
-                                <span style={{
-                                  color: c.state === 'correct' ? '#39ff14' : c.state === 'incorrect' ? '#ff4444' : isActiveWord && ci >= (('cursorPos' in segment && segment.cursorPos) || 0) ? 'rgba(148,163,184,0.5)' : 'rgba(148,163,184,0.4)',
-                                  textShadow: c.state === 'correct' ? '0 0 6px rgba(57,255,20,0.5)' : c.state === 'incorrect' ? '0 0 6px rgba(255,68,68,0.5)' : 'none',
-                                  marginLeft: isAtCursor ? '2px' : '0',
-                                }}>
-                                  {c.ch}
-                                </span>
-                              </span>
-                            );
-                          })}
-                        </span>
-                      );
-                    }
-
-                    // Pending words
+                  {(['Champion', 'Elite', 'Pro', 'Rookie'] as const).map((tier) => {
+                    const t = tierConfig[tier];
+                    const isCurrent = rank === tier;
                     return (
-                      <span key={`w-${wIdx}`} className="rounded-lg border border-transparent px-1.5 py-0.5" style={{ color: 'rgba(100,116,139,0.4)' }}>
-                        {segment.word}
-                      </span>
+                      <div key={tier} className="flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide transition-all duration-300"
+                        style={{ background: isCurrent ? t.bg : 'transparent', border: `1px solid ${isCurrent ? t.border : 'rgba(30,41,59,0.4)'}`, color: isCurrent ? t.color : 'rgba(100,116,139,0.3)', boxShadow: isCurrent ? `0 0 10px ${t.bg}` : 'none' }}>
+                        {isCurrent && <span>{t.icon}</span>}
+                        {tier}
+                      </div>
                     );
                   })}
-                </p>
+                </div>
               </div>
 
-              {/* Textarea — disabled when paused */}
-              <textarea
-                ref={textareaRef}
-                value={typed}
-                onChange={handleInput}
-                placeholder={
-                  isGeneratingActive ? '⏳ AI is preparing this challenge...'
-                  : !unlocked ? '🔒 Complete the previous level to unlock.'
-                  : status === 'paused' ? '⏸ Paused — click Resume to continue...'
-                  : '▶ Start typing here...'
-                }
-                disabled={!unlocked || isGeneratingActive || status === 'paused'}
-                className="typing-area"
-                spellCheck={false}
-                autoFocus
-              />
-
-              {/* Action buttons */}
-              <div className="mt-4 flex flex-wrap items-center gap-3">
-                <PrimaryButton onClick={togglePause} disabled={!unlocked} variant="cyan">
-                  {status === 'running' ? '⏸ Pause' : status === 'paused' ? '▶ Resume' : '▶ Start'}
-                </PrimaryButton>
-                <PrimaryButton onClick={resetRun} variant="dark" disabled={!unlocked && status !== 'finished'}>
-                  ↺ Reset
-                </PrimaryButton>
-                <PrimaryButton onClick={() => void handleGoToNext()} variant="purple" disabled={isGeneratingNext || !completedLevels.includes(activeLevel.id)}>
-                  {isGeneratingNext ? '⏳ Generating...' : '⚡ Next Level'}
-                </PrimaryButton>
-                {newPB && (
-                  <span className="rounded-full px-3 py-1 text-xs font-bold" style={{ background: 'rgba(255,183,3,0.1)', border: '1px solid rgba(255,183,3,0.3)', color: '#ffb703', animation: 'live-pulse 1.5s ease-in-out infinite' }}>
-                    🏆 New Personal Best!
-                  </span>
-                )}
+              {/* Metrics: 5 tiles — WPM, Net WPM, Accuracy, Errors, Progress */}
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
+                <MetricTile label="WPM" value={stats.wpm} accent="cyan" subtitle="Gross" />
+                <MetricTile label="Net WPM" value={stats.netWpm} accent="violet" subtitle="Adjusted" />
+                <MetricTile label="Accuracy" value={`${stats.accuracy}%`} accent="emerald" subtitle="Precision" />
+                <MetricTile label="Errors" value={stats.incorrectChars} accent="rose" subtitle="Mistakes" />
+                <MetricTile label="Progress" value={`${progress}%`} accent="amber" subtitle="Completion" />
               </div>
-            </div>
 
-            {/* Battle pass summary */}
-            <div className="rounded-xl p-4" style={{ background: 'rgba(10,14,28,0.7)', border: '1px solid rgba(30,41,59,0.7)' }}>
-              <p className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500">Battle Pass</p>
-              <div className="grid grid-cols-4 gap-2">
-                {[
-                  { label: 'Best Stars', value: `★ ${currentResult?.stars ?? 0}`, color: '#ffb703', glow: 'rgba(255,183,3,0.3)', bg: 'rgba(255,183,3,0.06)', border: 'rgba(255,183,3,0.15)' },
-                  { label: 'Levels Done', value: completedLevels.length, color: '#00f5ff', glow: 'rgba(0,245,255,0.3)', bg: 'rgba(0,245,255,0.06)', border: 'rgba(0,245,255,0.15)' },
-                  { label: 'Best WPM', value: currentResult?.wpm ? `${currentResult.wpm}` : '—', color: '#bf5fff', glow: 'rgba(191,95,255,0.3)', bg: 'rgba(191,95,255,0.06)', border: 'rgba(191,95,255,0.15)' },
-                  { label: 'Achievements', value: achievements.length, color: '#ff3cac', glow: 'rgba(255,60,172,0.3)', bg: 'rgba(255,60,172,0.06)', border: 'rgba(255,60,172,0.15)' },
-                ].map((item) => (
-                  <div key={item.label} className="rounded-xl p-2.5 text-center" style={{ background: item.bg, border: `1px solid ${item.border}` }}>
-                    <p className="text-[9px] font-semibold uppercase tracking-widest" style={{ color: 'rgba(100,116,139,0.6)' }}>{item.label}</p>
-                    <p className="mt-1 text-xl font-black tabular-nums" style={{ color: item.color, textShadow: `0 0 10px ${item.glow}`, fontFamily: "'JetBrains Mono', monospace" }}>
-                      {item.value}
-                    </p>
+              {/* Progress + Combo row */}
+              <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
+                <div className="rounded-xl p-4" style={{ background: 'rgba(10,14,28,0.8)', border: '1px solid rgba(30,41,59,0.7)' }}>
+                  <div className="mb-2.5 flex items-center justify-between">
+                    <span className="text-xs font-semibold uppercase tracking-widest text-slate-500">Power Gauge — {activeLevel.title}</span>
+                    <span className="text-xs text-slate-500 tabular-nums">{typed.length}/{passage.length}</span>
                   </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* ─── RIGHT COLUMN ─── */}
-          <div className="flex flex-col gap-4">
-            {/* Orbital Stage */}
-            <div className="overflow-hidden rounded-2xl" style={{ border: '1px solid rgba(191,95,255,0.15)', boxShadow: '0 0 30px rgba(191,95,255,0.08)' }}>
-              <OrbitalStage />
-            </div>
-
-            {/* M3: XP Bar */}
-            <XPBar totalXp={totalXp} justEarned={xpGain?.total ?? 0} leveledUp={leveledUp} />
-
-            {/* M3: Streak + Arena Status side by side */}
-            <div className="grid grid-cols-[auto_1fr] gap-3">
-              <StreakBadge streak={streak} atRisk={streakAtRisk} compact={false} />
-              <div className="rounded-2xl p-4" style={{ background: 'rgba(10,14,28,0.85)', border: '1px solid rgba(30,41,59,0.7)' }}>
-                <p className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500">Arena Status</p>
-                <div className="mb-3 rounded-xl p-3 text-center" style={{ background: tc.bg, border: `1px solid ${tc.border}`, boxShadow: `0 0 20px ${tc.bg}` }}>
-                  <div className="mb-1 text-2xl">{tc.icon}</div>
-                  <p className="text-[10px] text-slate-500 uppercase tracking-widest">Rank</p>
-                  <p className="mt-0.5 text-2xl font-black" style={{ color: tc.color, textShadow: `0 0 12px ${tc.color}` }}>{rank}</p>
+                  <div className="relative h-2.5 overflow-hidden rounded-full" style={{ background: 'rgba(15,23,42,0.8)', border: '1px solid rgba(30,41,59,0.5)' }}>
+                    <div className="h-full rounded-full transition-all duration-300"
+                      style={{ width: `${Math.max(progress, 2)}%`, background: progress >= 90 ? 'linear-gradient(90deg, #ff3cac, #ffb703)' : progress >= 50 ? 'linear-gradient(90deg, #00f5ff, #bf5fff)' : 'linear-gradient(90deg, #00f5ff, #0ea5e9)', boxShadow: progress > 0 ? '0 0 8px rgba(0,245,255,0.4)' : 'none' }} />
+                    {isRunning && progress > 0 && (
+                      <div className="absolute inset-0 rounded-full opacity-30" style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%)', backgroundSize: '200% 100%', animation: 'shimmer 1.5s linear infinite' }} />
+                    )}
+                  </div>
+                  <p className="mt-1.5 text-xs text-slate-600">
+                    {status === 'finished' ? '✅ Challenge complete!' : status === 'running' ? '⚡ Keep going!' : status === 'paused' ? '⏸ Paused — resume when ready' : 'Start typing to begin the race'}
+                  </p>
                 </div>
-                <div className="rounded-xl p-3" style={{ background: 'rgba(0,245,255,0.04)', border: '1px solid rgba(0,245,255,0.1)' }}>
-                  <p className="text-[9px] font-bold uppercase tracking-widest text-slate-600">Next Unlock</p>
-                  <p className="mt-1 text-sm font-semibold text-white">{nextLevelTitle}</p>
+                <div className="flex min-w-[110px] flex-col items-center justify-center rounded-xl p-4 text-center"
+                  style={{ background: isComboHigh ? 'rgba(255,183,3,0.06)' : 'rgba(10,14,28,0.8)', border: `1px solid ${isComboHigh ? 'rgba(255,183,3,0.25)' : 'rgba(30,41,59,0.7)'}`, boxShadow: isComboHigh ? '0 0 20px rgba(255,183,3,0.15)' : 'none' }}>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Combo</p>
+                  <p className={`text-4xl font-black tabular-nums ${isComboHigh ? 'combo-active' : ''}`}
+                    style={{ fontFamily: "'JetBrains Mono', monospace", color: isComboHigh ? '#ffb703' : '#bf5fff', textShadow: isComboHigh ? '0 0 15px rgba(255,183,3,0.7)' : '0 0 10px rgba(191,95,255,0.5)' }}>
+                    {combo}x
+                  </p>
+                  <p className="mt-1 text-[10px] text-slate-600">{isComboHigh ? '🔥 On fire!' : 'multiplier'}</p>
                 </div>
               </div>
-            </div>
 
-            {/* M3: Daily Challenge */}
-            <DailyChallenge
-              level={dailyLevel}
-              isDone={dailyDone}
-              onStart={() => { handleSelectLevel(dailyLevelId); }}
-            />
+              {/* ─── TYPING ARENA ─── */}
+              <div className="rounded-2xl p-5" style={{ background: 'rgba(8,12,22,0.95)', border: '1px solid rgba(0,245,255,0.1)', boxShadow: isRunning ? '0 0 30px rgba(0,245,255,0.06), inset 0 0 30px rgba(0,245,255,0.02)' : 'none', transition: 'box-shadow 0.5s' }}>
+                {/* Arena header */}
+                <div className="mb-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full"
+                      style={{ background: status === 'running' ? '#39ff14' : status === 'paused' ? '#ffb703' : status === 'finished' ? '#00f5ff' : '#475569', boxShadow: status === 'running' ? '0 0 8px #39ff14' : status === 'paused' ? '0 0 8px #ffb703' : 'none' }} />
+                    <span className="text-xs font-semibold uppercase tracking-widest text-slate-500">
+                      {isGeneratingActive ? 'Generating challenge...' : unlocked ? 'Active Challenge' : 'Locked'}
+                    </span>
+                  </div>
+                  {status === 'running' && (
+                    <span className="rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-widest"
+                      style={{ background: 'rgba(57,255,20,0.1)', border: '1px solid rgba(57,255,20,0.3)', color: '#39ff14', animation: 'live-pulse 1.2s ease-in-out infinite' }}>
+                      ● LIVE
+                    </span>
+                  )}
+                </div>
 
-            {/* Heat bar */}
-            <div className="rounded-2xl p-4" style={{ background: 'rgba(10,14,28,0.7)', border: '1px solid rgba(30,41,59,0.7)' }}>
-              <div className="mb-2 flex items-center justify-between">
-                <p className="text-xs font-bold uppercase tracking-widest text-slate-500">Heat Level</p>
-                <span className="rounded-full px-2 py-0.5 text-[10px] font-bold"
-                  style={{ background: progress >= 90 ? 'rgba(255,60,172,0.1)' : progress >= 60 ? 'rgba(255,183,3,0.1)' : 'rgba(30,41,59,0.5)', border: `1px solid ${progress >= 90 ? 'rgba(255,60,172,0.3)' : progress >= 60 ? 'rgba(255,183,3,0.3)' : 'rgba(30,41,59,0.5)'}`, color: progress >= 90 ? '#ff3cac' : progress >= 60 ? '#ffb703' : '#475569' }}>
-                  {progress >= 90 ? '🔥 Overdrive' : progress >= 60 ? '⚡ Locked In' : '❄️ Warm-up'}
-                </span>
-              </div>
-              <div className="grid grid-cols-10 gap-0.5">
-                {Array.from({ length: 10 }, (_, i) => (
-                  <div key={i} className="h-2 rounded-sm transition-all duration-300"
-                    style={{ background: i < Math.round(progress / 10) ? (i >= 8 ? '#ff3cac' : i >= 5 ? '#ffb703' : '#00f5ff') : 'rgba(30,41,59,0.5)', boxShadow: i < Math.round(progress / 10) ? '0 0 4px currentColor' : 'none' }} />
-                ))}
-              </div>
-            </div>
+                {/* ─── Character-level word display ─── */}
+                <div className="mb-5 rounded-xl p-4" style={{ background: 'rgba(5,8,16,0.8)', border: '1px solid rgba(30,41,59,0.5)', minHeight: '5.5rem' }}>
+                  <p className="flex flex-wrap gap-x-2 gap-y-2 leading-8" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1rem' }}>
+                    {charFeedback.map((segment, wIdx) => {
+                      const isActiveWord = segment.active;
 
-            {/* Achievements panel */}
-            {achievements.length > 0 && (
-              <div className="rounded-2xl p-4" style={{ background: 'rgba(10,14,28,0.7)', border: '1px solid rgba(30,41,59,0.7)' }}>
-                <p className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500">Achievements</p>
-                <div className="space-y-2">
-                  {achievements.map((ach) => (
-                    <div key={ach.id} className="flex items-center gap-3 rounded-xl p-2.5"
-                      style={{ background: `${achievementStateColor[ach.state]}08`, border: `1px solid ${achievementStateColor[ach.state]}20` }}>
-                      <span className="text-lg">{ach.icon}</span>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-1.5">
-                          <p className="text-xs font-bold text-white truncate">{ach.title}</p>
-                          <span className="shrink-0 rounded-full px-1.5 py-0.5 text-[8px] font-bold uppercase"
-                            style={{ background: `${achievementStateColor[ach.state]}15`, color: achievementStateColor[ach.state] }}>
-                            {ach.state}
+                      if (isActiveWord || segment.wordState === 'correct' || segment.wordState === 'incorrect') {
+                        // Render character-by-character
+                        return (
+                          <span
+                            key={`w-${wIdx}`}
+                            className="inline-flex items-center rounded-lg border px-1.5 py-0.5 transition-all duration-100"
+                            style={{
+                              borderColor: segment.wordState === 'correct' ? 'rgba(57,255,20,0.2)' : segment.wordState === 'incorrect' && !isActiveWord ? 'rgba(255,68,68,0.3)' : isActiveWord && segment.wordState === 'incorrect' ? 'rgba(255,68,68,0.3)' : isActiveWord ? 'rgba(191,95,255,0.25)' : 'transparent',
+                              background: segment.wordState === 'correct' ? 'rgba(57,255,20,0.05)' : segment.wordState === 'incorrect' && !isActiveWord ? 'rgba(255,68,68,0.08)' : isActiveWord ? 'rgba(191,95,255,0.07)' : 'transparent',
+                            }}
+                          >
+                            {'chars' in segment && segment.chars.map((c, ci) => {
+                              const isAtCursor = isActiveWord && 'cursorPos' in segment && ci === segment.cursorPos;
+                              return (
+                                <span key={ci} style={{ position: 'relative', display: 'inline-block' }}>
+                                  {isAtCursor && (
+                                    <span style={{ position: 'absolute', left: 0, top: '10%', width: '2px', height: '80%', background: '#00f5ff', boxShadow: '0 0 6px #00f5ff', borderRadius: '1px', animation: 'cursor-blink 1s ease-in-out infinite' }} />
+                                  )}
+                                  <span style={{
+                                    color: c.state === 'correct' ? '#39ff14' : c.state === 'incorrect' ? '#ff4444' : isActiveWord && ci >= (('cursorPos' in segment && segment.cursorPos) || 0) ? 'rgba(148,163,184,0.5)' : 'rgba(148,163,184,0.4)',
+                                    textShadow: c.state === 'correct' ? '0 0 6px rgba(57,255,20,0.5)' : c.state === 'incorrect' ? '0 0 6px rgba(255,68,68,0.5)' : 'none',
+                                    marginLeft: isAtCursor ? '2px' : '0',
+                                  }}>
+                                    {c.ch}
+                                  </span>
+                                </span>
+                              );
+                            })}
                           </span>
-                        </div>
-                        <p className="text-[10px] text-slate-600 truncate">{ach.description}</p>
-                      </div>
+                        );
+                      }
+
+                      // Pending words
+                      return (
+                        <span key={`w-${wIdx}`} className="rounded-lg border border-transparent px-1.5 py-0.5" style={{ color: 'rgba(100,116,139,0.4)' }}>
+                          {segment.word}
+                        </span>
+                      );
+                    })}
+                  </p>
+                </div>
+
+                {/* Textarea — disabled when paused */}
+                <textarea
+                  ref={textareaRef}
+                  value={typed}
+                  onChange={handleInput}
+                  placeholder={
+                    isGeneratingActive ? '⏳ AI is preparing this challenge...'
+                      : !unlocked ? '🔒 Complete the previous level to unlock.'
+                        : status === 'paused' ? '⏸ Paused — click Resume to continue...'
+                          : '▶ Start typing here...'
+                  }
+                  disabled={!unlocked || isGeneratingActive || status === 'paused'}
+                  className="typing-area"
+                  spellCheck={false}
+                  autoFocus
+                />
+
+                {/* Action buttons */}
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  <PrimaryButton onClick={togglePause} disabled={!unlocked} variant="cyan">
+                    {status === 'running' ? '⏸ Pause' : status === 'paused' ? '▶ Resume' : '▶ Start'}
+                  </PrimaryButton>
+                  <PrimaryButton onClick={resetRun} variant="dark" disabled={!unlocked && status !== 'finished'}>
+                    ↺ Reset
+                  </PrimaryButton>
+                  <PrimaryButton onClick={() => void handleGoToNext()} variant="purple" disabled={isGeneratingNext || !completedLevels.includes(activeLevel.id)}>
+                    {isGeneratingNext ? '⏳ Generating...' : '⚡ Next Level'}
+                  </PrimaryButton>
+                  {newPB && (
+                    <span className="rounded-full px-3 py-1 text-xs font-bold" style={{ background: 'rgba(255,183,3,0.1)', border: '1px solid rgba(255,183,3,0.3)', color: '#ffb703', animation: 'live-pulse 1.5s ease-in-out infinite' }}>
+                      🏆 New Personal Best!
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Battle pass summary */}
+              <div className="rounded-xl p-4" style={{ background: 'rgba(10,14,28,0.7)', border: '1px solid rgba(30,41,59,0.7)' }}>
+                <p className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500">Battle Pass</p>
+                <div className="grid grid-cols-4 gap-2">
+                  {[
+                    { label: 'Best Stars', value: `★ ${currentResult?.stars ?? 0}`, color: '#ffb703', glow: 'rgba(255,183,3,0.3)', bg: 'rgba(255,183,3,0.06)', border: 'rgba(255,183,3,0.15)' },
+                    { label: 'Levels Done', value: completedLevels.length, color: '#00f5ff', glow: 'rgba(0,245,255,0.3)', bg: 'rgba(0,245,255,0.06)', border: 'rgba(0,245,255,0.15)' },
+                    { label: 'Best WPM', value: currentResult?.wpm ? `${currentResult.wpm}` : '—', color: '#bf5fff', glow: 'rgba(191,95,255,0.3)', bg: 'rgba(191,95,255,0.06)', border: 'rgba(191,95,255,0.15)' },
+                    { label: 'Achievements', value: achievements.length, color: '#ff3cac', glow: 'rgba(255,60,172,0.3)', bg: 'rgba(255,60,172,0.06)', border: 'rgba(255,60,172,0.15)' },
+                  ].map((item) => (
+                    <div key={item.label} className="rounded-xl p-2.5 text-center" style={{ background: item.bg, border: `1px solid ${item.border}` }}>
+                      <p className="text-[9px] font-semibold uppercase tracking-widest" style={{ color: 'rgba(100,116,139,0.6)' }}>{item.label}</p>
+                      <p className="mt-1 text-xl font-black tabular-nums" style={{ color: item.color, textShadow: `0 0 10px ${item.glow}`, fontFamily: "'JetBrains Mono', monospace" }}>
+                        {item.value}
+                      </p>
                     </div>
                   ))}
                 </div>
               </div>
-            )}
+            </div>
+
+            {/* ─── RIGHT COLUMN ─── */}
+            <div className="flex flex-col gap-4">
+              {/* Orbital Stage */}
+              <div className="overflow-hidden rounded-2xl" style={{ border: '1px solid rgba(191,95,255,0.15)', boxShadow: '0 0 30px rgba(191,95,255,0.08)' }}>
+                <OrbitalStage />
+              </div>
+
+              {/* M3: XP Bar */}
+              <XPBar totalXp={totalXp} justEarned={xpGain?.total ?? 0} leveledUp={leveledUp} />
+
+              {/* M3: Streak + Arena Status side by side */}
+              <div className="grid grid-cols-[auto_1fr] gap-3">
+                <StreakBadge streak={streak} atRisk={streakAtRisk} compact={false} />
+                <div className="rounded-2xl p-4" style={{ background: 'rgba(10,14,28,0.85)', border: '1px solid rgba(30,41,59,0.7)' }}>
+                  <p className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500">Arena Status</p>
+                  <div className="mb-3 rounded-xl p-3 text-center" style={{ background: tc.bg, border: `1px solid ${tc.border}`, boxShadow: `0 0 20px ${tc.bg}` }}>
+                    <div className="mb-1 text-2xl">{tc.icon}</div>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-widest">Rank</p>
+                    <p className="mt-0.5 text-2xl font-black" style={{ color: tc.color, textShadow: `0 0 12px ${tc.color}` }}>{rank}</p>
+                  </div>
+                  <div className="rounded-xl p-3" style={{ background: 'rgba(0,245,255,0.04)', border: '1px solid rgba(0,245,255,0.1)' }}>
+                    <p className="text-[9px] font-bold uppercase tracking-widest text-slate-600">Next Unlock</p>
+                    <p className="mt-1 text-sm font-semibold text-white">{nextLevelTitle}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* M3: Daily Challenge */}
+              <DailyChallenge
+                level={dailyLevel}
+                isDone={dailyDone}
+                onStart={() => { handleSelectLevel(dailyLevelId); }}
+              />
+
+              {/* Heat bar */}
+              <div className="rounded-2xl p-4" style={{ background: 'rgba(10,14,28,0.7)', border: '1px solid rgba(30,41,59,0.7)' }}>
+                <div className="mb-2 flex items-center justify-between">
+                  <p className="text-xs font-bold uppercase tracking-widest text-slate-500">Heat Level</p>
+                  <span className="rounded-full px-2 py-0.5 text-[10px] font-bold"
+                    style={{ background: progress >= 90 ? 'rgba(255,60,172,0.1)' : progress >= 60 ? 'rgba(255,183,3,0.1)' : 'rgba(30,41,59,0.5)', border: `1px solid ${progress >= 90 ? 'rgba(255,60,172,0.3)' : progress >= 60 ? 'rgba(255,183,3,0.3)' : 'rgba(30,41,59,0.5)'}`, color: progress >= 90 ? '#ff3cac' : progress >= 60 ? '#ffb703' : '#475569' }}>
+                    {progress >= 90 ? '🔥 Overdrive' : progress >= 60 ? '⚡ Locked In' : '❄️ Warm-up'}
+                  </span>
+                </div>
+                <div className="grid grid-cols-10 gap-0.5">
+                  {Array.from({ length: 10 }, (_, i) => (
+                    <div key={i} className="h-2 rounded-sm transition-all duration-300"
+                      style={{ background: i < Math.round(progress / 10) ? (i >= 8 ? '#ff3cac' : i >= 5 ? '#ffb703' : '#00f5ff') : 'rgba(30,41,59,0.5)', boxShadow: i < Math.round(progress / 10) ? '0 0 4px currentColor' : 'none' }} />
+                  ))}
+                </div>
+              </div>
+
+              {/* Achievements panel */}
+              {achievements.length > 0 && (
+                <div className="rounded-2xl p-4" style={{ background: 'rgba(10,14,28,0.7)', border: '1px solid rgba(30,41,59,0.7)' }}>
+                  <p className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500">Achievements</p>
+                  <div className="space-y-2">
+                    {achievements.map((ach) => (
+                      <div key={ach.id} className="flex items-center gap-3 rounded-xl p-2.5"
+                        style={{ background: `${achievementStateColor[ach.state]}08`, border: `1px solid ${achievementStateColor[ach.state]}20` }}>
+                        <span className="text-lg">{ach.icon}</span>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <p className="text-xs font-bold text-white truncate">{ach.title}</p>
+                            <span className="shrink-0 rounded-full px-1.5 py-0.5 text-[8px] font-bold uppercase"
+                              style={{ background: `${achievementStateColor[ach.state]}15`, color: achievementStateColor[ach.state] }}>
+                              {ach.state}
+                            </span>
+                          </div>
+                          <p className="text-[10px] text-slate-600 truncate">{ach.description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    {/* M3: XP Toast */}
-    <XPToast
-      gain={xpGain}
-      leveledUp={leveledUp}
-      onDone={() => { setXpGain(null); setLeveledUp(null); }}
-    />
-
-    {/* M3: Welcome-back modal */}
-    {showWelcomeBack && welcomeBackType && (
-      <WelcomeBackModal
-        type={welcomeBackType}
-        streak={streak}
-        totalXp={totalXp}
-        onDismiss={() => setShowWelcomeBack(false)}
+      {/* M3: XP Toast */}
+      <XPToast
+        gain={xpGain}
+        leveledUp={leveledUp}
+        onDone={() => { setXpGain(null); setLeveledUp(null); }}
       />
-    )}
-  </>
+
+      {/* M3: Welcome-back modal */}
+      {showWelcomeBack && welcomeBackType && (
+        <WelcomeBackModal
+          type={welcomeBackType}
+          streak={streak}
+          totalXp={totalXp}
+          onDismiss={() => setShowWelcomeBack(false)}
+        />
+      )}
+    </>
   );
 }
 

@@ -93,7 +93,7 @@ export default function LeaderboardPage() {
             🏆 Hall of Heroes
           </h2>
           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">
-            Top performers in the TypingHero kingdoms
+            Top performers in the TypingHeroes kingdoms
           </p>
         </div>
 
@@ -101,21 +101,19 @@ export default function LeaderboardPage() {
         <div className="flex gap-2">
           <button
             onClick={() => setActiveTab('global')}
-            className={`rounded-xl px-4 py-2 text-xs font-bold uppercase tracking-wider cursor-pointer border transition-all ${
-              activeTab === 'global'
+            className={`rounded-xl px-4 py-2 text-xs font-bold uppercase tracking-wider cursor-pointer border transition-all ${activeTab === 'global'
                 ? 'border-cyan-500 bg-cyan-500/10 text-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.15)]'
                 : 'border-slate-800 bg-[#0a0e1c]/80 text-slate-400 hover:text-slate-200'
-            }`}
+              }`}
           >
             Global XP Rank
           </button>
           <button
             onClick={() => setActiveTab('level')}
-            className={`rounded-xl px-4 py-2 text-xs font-bold uppercase tracking-wider cursor-pointer border transition-all ${
-              activeTab === 'level'
+            className={`rounded-xl px-4 py-2 text-xs font-bold uppercase tracking-wider cursor-pointer border transition-all ${activeTab === 'level'
                 ? 'border-indigo-500 bg-indigo-500/10 text-indigo-400 shadow-[0_0_12px_rgba(99,102,241,0.15)]'
                 : 'border-slate-800 bg-[#0a0e1c]/80 text-slate-400 hover:text-slate-200'
-            }`}
+              }`}
           >
             Level Speedruns
           </button>

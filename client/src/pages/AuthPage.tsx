@@ -75,7 +75,7 @@ export default function AuthPage() {
         {/* Game Logo/Title */}
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-black tracking-wider bg-gradient-to-r from-cyan-400 via-indigo-400 to-purple-500 bg-clip-text text-transparent uppercase drop-shadow-[0_0_15px_rgba(6,182,212,0.2)]">
-            🛡️ TypingHero
+            🛡️ TypingHeroes
           </h1>
           <p className="mt-1.5 text-xs font-semibold text-slate-500 uppercase tracking-widest">
             {isRegistering ? 'Choose your path & begin' : 'Return to the Arena'}
@@ -134,11 +134,10 @@ export default function AuthPage() {
                     type="button"
                     onClick={() => setSelectedAvatar(av.id)}
                     title={`${av.name}: ${av.desc}`}
-                    className={`flex flex-col items-center justify-center rounded-xl p-2 border transition-all cursor-pointer ${
-                      selectedAvatar === av.id
-                        ? 'border-cyan-500 bg-cyan-500/10 shadow-[0_0_15px_rgba(6,182,212,0.2)]'
-                        : 'border-slate-800 bg-slate-950/50 hover:border-slate-700'
-                    }`}
+                    className={`flex flex-col items-center justify-center rounded-xl p-2 border transition-all cursor-pointer ${selectedAvatar === av.id
+                      ? 'border-cyan-500 bg-cyan-500/10 shadow-[0_0_15px_rgba(6,182,212,0.2)]'
+                      : 'border-slate-800 bg-slate-950/50 hover:border-slate-700'
+                      }`}
                   >
                     <span className="text-2xl">{av.emoji}</span>
                     <span className="mt-1 text-[8px] font-bold text-slate-400 uppercase tracking-tight">
@@ -194,7 +193,7 @@ export default function AuthPage() {
           >
             {isRegistering
               ? 'Already have a Hero account? Login'
-              : 'New to TypingHero? Create an account'}
+              : 'New to TypingHeroes? Create an account'}
           </button>
         </div>
       </div>

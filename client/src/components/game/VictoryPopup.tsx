@@ -171,7 +171,7 @@ export default function VictoryPopup({
   };
 
   const handleShareScore = () => {
-    const shareText = `🛡️ I cleared Level ${activeLevelId} in TypingHero!\n⚡ Speed: ${stats.wpm} WPM\n🎯 Accuracy: ${stats.accuracy}%\n⭐ Stars: ${'★'.repeat(stats.stars)}\nCan you beat my record? Play now! ⚔️`;
+    const shareText = `🛡️ I cleared Level ${activeLevelId} in TypingHeroes!\n⚡ Speed: ${stats.wpm} WPM\n🎯 Accuracy: ${stats.accuracy}%\n⭐ Stars: ${'★'.repeat(stats.stars)}\nCan you beat my record? Play now! ⚔️`;
     void navigator.clipboard.writeText(shareText);
     setCopiedShare(true);
     setTimeout(() => setCopiedShare(false), 2000);
@@ -248,7 +248,7 @@ export default function VictoryPopup({
                 <h3 className="text-center text-xs font-black uppercase tracking-widest text-indigo-400 mb-3.5">
                   ⚔️ Dungeon Challenge Results ⚔️
                 </h3>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   {/* Challenger */}
                   <div className="rounded-xl bg-slate-950/40 p-3.5 border border-slate-900 text-center">
@@ -267,18 +267,16 @@ export default function VictoryPopup({
                   </div>
 
                   {/* Player */}
-                  <div className={`rounded-xl p-3.5 border text-center relative ${
-                    challengeResult.won 
-                      ? 'border-emerald-500/30 bg-emerald-500/5' 
+                  <div className={`rounded-xl p-3.5 border text-center relative ${challengeResult.won
+                      ? 'border-emerald-500/30 bg-emerald-500/5'
                       : 'border-rose-500/30 bg-rose-500/5'
-                  }`}>
-                    <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500">You</p>
-                    <p className={`text-sm font-black mt-1 uppercase tracking-wider ${
-                      challengeResult.won ? 'text-emerald-400 font-black' : 'text-rose-400 font-black'
                     }`}>
+                    <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500">You</p>
+                    <p className={`text-sm font-black mt-1 uppercase tracking-wider ${challengeResult.won ? 'text-emerald-400 font-black' : 'text-rose-400 font-black'
+                      }`}>
                       {challengeResult.won ? '🏆 Victory!' : '💀 Defeated'}
                     </p>
-                    
+
                     <div className="mt-2.5 flex justify-around text-xs font-mono">
                       <div>
                         <span className="block text-[8px] text-slate-600 font-bold uppercase tracking-widest">WPM</span>
@@ -328,10 +326,10 @@ export default function VictoryPopup({
               {/* Run stats — 2×2 grid */}
               <div className="grid grid-cols-2 gap-2">
                 {[
-                  { label: 'Gross WPM', value: stats.wpm,            color: '#00f5ff', glow: 'rgba(0,245,255,0.3)',   icon: '⚡' },
-                  { label: 'Net WPM',   value: stats.netWpm,          color: '#bf5fff', glow: 'rgba(191,95,255,0.3)', icon: '🎯' },
-                  { label: 'Accuracy',  value: `${stats.accuracy}%`,  color: '#39ff14', glow: 'rgba(57,255,20,0.3)',  icon: '✓' },
-                  { label: 'Stars',     value: '★'.repeat(stats.stars), color: starColor, glow: starGlow,            icon: '🏅' },
+                  { label: 'Gross WPM', value: stats.wpm, color: '#00f5ff', glow: 'rgba(0,245,255,0.3)', icon: '⚡' },
+                  { label: 'Net WPM', value: stats.netWpm, color: '#bf5fff', glow: 'rgba(191,95,255,0.3)', icon: '🎯' },
+                  { label: 'Accuracy', value: `${stats.accuracy}%`, color: '#39ff14', glow: 'rgba(57,255,20,0.3)', icon: '✓' },
+                  { label: 'Stars', value: '★'.repeat(stats.stars), color: starColor, glow: starGlow, icon: '🏅' },
                 ].map((item) => (
                   <div
                     key={item.label}

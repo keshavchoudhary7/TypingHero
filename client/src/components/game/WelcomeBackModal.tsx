@@ -20,7 +20,7 @@ const config: Record<NonNullable<WelcomeBackType>, {
 }> = {
   first_time: {
     icon: '🚀',
-    title: 'Welcome to TypingHero!',
+    title: 'Welcome to TypingHeroes!',
     subtitle: () => 'Your journey to elite typing starts now. Complete levels to earn XP and climb the ranks.',
     accentColor: '#00f5ff',
     accentGlow: 'rgba(0,245,255,0.3)',

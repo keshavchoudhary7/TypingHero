@@ -111,7 +111,7 @@ function NavigationLayout() {
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveTab('arena')}>
             <span className="text-xl">🛡️</span>
             <span className="font-black uppercase tracking-wider text-white text-sm bg-gradient-to-r from-cyan-400 to-indigo-400 bg-clip-text text-transparent">
-              TypingHero
+              TypingHeroes
             </span>
           </div>
 
