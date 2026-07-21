@@ -9,6 +9,7 @@ export default function MultiplayerPage() {
     wsStatus,
     matchState,
     queueCount,
+    serverRank,
     errorMessage,
     toastMessage,
     room,
@@ -126,6 +127,7 @@ export default function MultiplayerPage() {
             elapsedMs={elapsedMs}
             isRacing={isRacing}
             completedStats={completedStats}
+            serverRank={serverRank}
             textareaRef={textareaRef}
             isHost={isHost}
             currentUsername={username}

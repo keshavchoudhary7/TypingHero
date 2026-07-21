@@ -11,6 +11,7 @@ type MultiplayerArenaProps = {
   elapsedMs: number;
   isRacing: boolean;
   completedStats: { wpm: number; accuracy: number; timeMs: number } | null;
+  serverRank: number | null;
   textareaRef: RefObject<HTMLTextAreaElement | null>;
   isHost: boolean;
   currentUsername: string;
@@ -30,6 +31,7 @@ export default function MultiplayerArena({
   elapsedMs,
   isRacing,
   completedStats,
+  serverRank,
   textareaRef,
   isHost,
   currentUsername,
@@ -44,10 +46,6 @@ export default function MultiplayerArena({
   const hostPlayer = room.players.find((p) => p.isHost);
   const currentPassage = room.passage || 'Deep in the Whispering Woods, a rogue shadows the sleeping dragon, waiting for the crystal to glow.';
 
-  // Player's finished rank or live placement
-  const currentPlayerInRoom = room.players.find((p) => p.username === currentUsername);
-  const userRank = currentPlayerInRoom?.rank || (completedStats ? 1 : 1);
-
   const handleContainerClick = () => {
     textareaRef.current?.focus();
   };
@@ -56,11 +54,11 @@ export default function MultiplayerArena({
 
   return (
     <div className="space-y-6">
-      {/* Result Modal display when finished or player completed */}
-      {(completedStats || room.status === 'finished') && (
+      {/* Result Modal — only show when the server has confirmed our rank via race_finish_ack */}
+      {serverRank !== null && completedStats && (
         <ResultModal
-          stats={completedStats || (currentPlayerInRoom ? { wpm: currentPlayerInRoom.wpm, accuracy: currentPlayerInRoom.accuracy || 100, timeMs: currentPlayerInRoom.timeMs || elapsedMs } : null)}
-          rank={userRank}
+          stats={completedStats}
+          rank={serverRank}
           onRematch={onRematch}
           onLeaveRoom={onLeaveRoom}
         />

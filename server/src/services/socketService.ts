@@ -392,9 +392,18 @@ function handleWSMessage(socket: any, message: string) {
           player.timeMs = Number(payload.elapsedMs);
           player.finished = true;
 
-          // Assign placement rank
+          // Assign placement rank based on how many have finished before this player
           const finishers = room.players.filter((p) => p.finished).length;
           player.rank = finishers;
+
+          // Send rank confirmation directly to this player immediately
+          sendWSMessage(socket, {
+            type: 'race_finish_ack',
+            rank: player.rank,
+            wpm: player.wpm,
+            accuracy: player.accuracy,
+            timeMs: player.timeMs,
+          });
 
           // Record score submission to DB if valid/authenticated
           void (async () => {

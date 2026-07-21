@@ -58,6 +58,8 @@ export function useMultiplayerSocket() {
   const [elapsedMs, setElapsedMs] = useState(0);
   const [isRacing, setIsRacing] = useState(false);
   const [completedStats, setCompletedStats] = useState<{ wpm: number; accuracy: number; timeMs: number } | null>(null);
+  // Server-authoritative rank — set only when the server sends race_finish_ack
+  const [serverRank, setServerRank] = useState<number | null>(null);
 
   // Stable refs to prevent reconnects or stale closure issues
   const usernameRef = useRef(username);
@@ -148,6 +150,11 @@ export function useMultiplayerSocket() {
           startRaceLocal(msg.room?.passage || roomRef.current?.passage);
         }
         break;
+      case 'race_finish_ack':
+        // Server confirms this player's final rank — this is the source of truth
+        setServerRank(msg.rank);
+        setIsRacing(false);
+        break;
       case 'race_results':
         setRoom(msg.room);
         setIsRacing(false);
@@ -158,6 +165,7 @@ export function useMultiplayerSocket() {
         setCountdown(null);
         setTyped('');
         setCompletedStats(null);
+        setServerRank(null);
         hasFinishedRef.current = false;
         break;
       case 'error':
@@ -314,6 +322,7 @@ export function useMultiplayerSocket() {
     isRacingRef.current = false;
     setTyped('');
     setCompletedStats(null);
+    setServerRank(null);
     setIsRacing(false);
     setElapsedMs(0);
     sendWSMessage({ type: 'rematch' });
@@ -366,6 +375,7 @@ export function useMultiplayerSocket() {
     wsStatus,
     matchState,
     queueCount,
+    serverRank,
     errorMessage,
     toastMessage,
     room,
