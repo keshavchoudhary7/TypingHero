@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../lib/authContext';
+import { API_BASE } from '../lib/apiBase';
 
 type GlobalLeader = {
   username: string;
@@ -45,7 +46,7 @@ export default function LeaderboardPage() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:4000/api/leaderboard/global');
+      const response = await fetch(`${API_BASE}/api/leaderboard/global`);
       if (response.ok) {
         const data = await response.json();
         setGlobalLeaders(data);
@@ -64,7 +65,7 @@ export default function LeaderboardPage() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`http://localhost:4000/api/leaderboard/level/${lvlId}`);
+      const response = await fetch(`${API_BASE}/api/leaderboard/level/${lvlId}`);
       if (response.ok) {
         const data = await response.json();
         setLevelLeaders(data);

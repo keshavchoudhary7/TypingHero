@@ -6,6 +6,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from './firebase';
+import { API_BASE } from './apiBase';
 
 export type User = {
   id: string;
@@ -48,7 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchProfile = async (authToken: string) => {
     try {
-      const response = await fetch('http://localhost:4000/api/auth/me', {
+      const response = await fetch(`${API_BASE}/api/auth/me`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -79,7 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const userCredential = await signInWithEmailAndPassword(firebaseAuth, email, password);
       const idToken = await userCredential.user.getIdToken();
 
-      const response = await fetch('http://localhost:4000/api/auth/oauth-login', {
+      const response = await fetch(`${API_BASE}/api/auth/oauth-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ idToken, provider: 'email' }),
@@ -113,7 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const userCredential = await createUserWithEmailAndPassword(firebaseAuth, email, password);
       const idToken = await userCredential.user.getIdToken();
 
-      const response = await fetch('http://localhost:4000/api/auth/oauth-register', {
+      const response = await fetch(`${API_BASE}/api/auth/oauth-register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ idToken, provider: 'email', avatarId }),
@@ -149,7 +150,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const updateAvatar = async (avatarId: string): Promise<boolean> => {
     if (!token) return false;
     try {
-      const response = await fetch('http://localhost:4000/api/auth/avatar', {
+      const response = await fetch(`${API_BASE}/api/auth/avatar`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -175,7 +176,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const userCredential = await signInWithPopup(firebaseAuth, googleProvider);
       const idToken = await userCredential.user.getIdToken();
 
-      const response = await fetch('http://localhost:4000/api/auth/oauth-login', {
+      const response = await fetch(`${API_BASE}/api/auth/oauth-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ idToken, provider: providerName }),
@@ -211,7 +212,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const userCredential = await signInWithPopup(firebaseAuth, googleProvider);
       const idToken = await userCredential.user.getIdToken();
 
-      const response = await fetch('http://localhost:4000/api/auth/oauth-register', {
+      const response = await fetch(`${API_BASE}/api/auth/oauth-register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ idToken, provider: providerName, avatarId }),

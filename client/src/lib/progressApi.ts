@@ -1,3 +1,5 @@
+import { API_BASE } from './apiBase';
+
 export type ProgressPayload = {
   activeLevelId: number | null;
   completedLevels: number[];
@@ -46,7 +48,7 @@ export async function saveProgress(userId: string, payload: ProgressPayload, aut
     headers['Authorization'] = `Bearer ${authToken}`;
   }
 
-  const response = await fetch(`http://localhost:4000/api/progress/${userId}`, {
+  const response = await fetch(`${API_BASE}/api/progress/${userId}`, {
     method: 'POST',
     headers,
     body: JSON.stringify(payload),
@@ -65,7 +67,7 @@ export async function loadProgress(userId: string, authToken?: string | null): P
     headers['Authorization'] = `Bearer ${authToken}`;
   }
 
-  const response = await fetch(`http://localhost:4000/api/progress/${userId}`, { headers });
+  const response = await fetch(`${API_BASE}/api/progress/${userId}`, { headers });
 
   if (!response.ok) {
     throw new Error('Failed to load progress');

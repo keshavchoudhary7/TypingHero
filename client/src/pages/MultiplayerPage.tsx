@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { useAuth } from '../lib/authContext';
 import RaceTrack from '../components/game/RaceTrack';
+import { WS_BASE } from '../lib/apiBase';
 
 type Player = {
   id: string;
@@ -52,7 +53,7 @@ export default function MultiplayerPage() {
 
   // Connect to native websocket on mount
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:4000/multiplayer');
+    const ws = new WebSocket(`${WS_BASE}/multiplayer`);
     wsRef.current = ws;
 
     ws.onopen = () => {

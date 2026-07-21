@@ -24,6 +24,7 @@ import {
 import { fetchGeneratedChallenge, normalizeGeneratedChallenge } from '../lib/challengeApi';
 import { buildProgressPayload, loadProgress, saveProgress } from '../lib/progressApi';
 import { useAuth } from '../lib/authContext';
+import { API_BASE } from '../lib/apiBase';
 import MetricTile from '../components/ui/MetricTile';
 import PrimaryButton from '../components/ui/PrimaryButton';
 import OrbitalStage from '../components/three/OrbitalStage';
@@ -457,7 +458,7 @@ function DashboardPage() {
       // ── Leaderboard Submission with Anti-cheat ───────────────────────
       void (async () => {
         try {
-          await fetch('http://localhost:4000/api/leaderboard/submit', {
+          await fetch(`${API_BASE}/api/leaderboard/submit`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

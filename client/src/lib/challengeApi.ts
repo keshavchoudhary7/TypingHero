@@ -1,3 +1,5 @@
+import { API_BASE } from './apiBase';
+
 export type GeneratedChallenge = {
   id: string;
   title: string;
@@ -17,7 +19,7 @@ export function normalizeGeneratedChallenge(level: number, challenge: GeneratedC
 }
 
 export async function fetchGeneratedChallenge(level: number, difficulty: string) {
-  const response = await fetch('http://localhost:4000/api/challenges', {
+  const response = await fetch(`${API_BASE}/api/challenges`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ level, difficulty }),

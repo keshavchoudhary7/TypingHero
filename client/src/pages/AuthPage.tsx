@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../lib/authContext';
+import OAuthPendingOverlay from '../components/ui/OAuthPendingOverlay';
 
 const AVAILABLE_AVATARS = [
   { id: 'knight', emoji: '🛡️', name: 'Knight', desc: 'The Valiant Defender' },
@@ -17,9 +18,13 @@ export default function AuthPage() {
   const [selectedAvatar, setSelectedAvatar] = useState('knight');
   const [formError, setFormError] = useState<string | null>(null);
 
+  // Tracks the window between popup close and API response completing
+  const [oauthPending, setOauthPending] = useState(false);
+
   const handleOAuth = async (provider: 'google') => {
     setFormError(null);
     clearError();
+    setOauthPending(true);
     try {
       if (isRegistering) {
         await registerWithOAuth(provider, selectedAvatar);
@@ -28,6 +33,8 @@ export default function AuthPage() {
       }
     } catch (err: any) {
       setFormError(err.message || 'OAuth authentication failed.');
+    } finally {
+      setOauthPending(false);
     }
   };
 
@@ -60,6 +67,9 @@ export default function AuthPage() {
         <div className="absolute top-[20%] left-[30%] h-96 w-96 rounded-full bg-cyan-500/10 blur-[120px]" />
         <div className="absolute bottom-[20%] right-[30%] h-96 w-96 rounded-full bg-purple-500/10 blur-[120px]" />
       </div>
+
+      {/* OAuth Pending Overlay — shown between popup close and API response */}
+      {oauthPending && <OAuthPendingOverlay provider="Google" />}
 
       <div className="relative z-10 w-full max-w-md overflow-hidden rounded-2xl border border-slate-800 bg-[#0a0e1c]/90 p-8 shadow-2xl backdrop-blur-xl">
         {/* Game Logo/Title */}
@@ -158,12 +168,13 @@ export default function AuthPage() {
             </span>
           </div>
 
-          {/* Social OAuth Buttons */}
+          {/* Google OAuth Button */}
           <div className="flex justify-center">
             <button
               type="button"
               onClick={() => handleOAuth('google')}
-              className="flex w-full items-center justify-center gap-2.5 rounded-xl border border-slate-800 bg-slate-950/50 py-3 text-sm font-semibold text-slate-300 hover:border-red-500/50 hover:bg-red-500/5 transition-all cursor-pointer"
+              disabled={oauthPending}
+              className="flex w-full items-center justify-center gap-2.5 rounded-xl border border-slate-800 bg-slate-950/50 py-3 text-sm font-semibold text-slate-300 hover:border-red-500/50 hover:bg-red-500/5 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span className="text-red-500">🔴</span> Sign in with Google
             </button>
@@ -183,7 +194,7 @@ export default function AuthPage() {
           >
             {isRegistering
               ? 'Already have a Hero account? Login'
-              : "New to TypingHero? Create an account"}
+              : 'New to TypingHero? Create an account'}
           </button>
         </div>
       </div>
