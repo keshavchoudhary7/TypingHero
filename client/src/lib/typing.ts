@@ -74,14 +74,14 @@ export function isLevelUnlocked(levelId: number, completedLevels: number[]): boo
 export function getLevelStars({ accuracy, wpm, level = 1 }: { accuracy: number; wpm: number; level?: number }): number {
   // WPM required for 3★ rises per level (Easy ~40, Medium ~35, Hard ~30 net on long passages)
   const threeStarAcc = 95;
-  const twoStarAcc   = 85;
+  const twoStarAcc = 85;
   // WPM floor for 3★: starts at 45 for L1, increases by 3 per level, caps at 70 for L8+
   const threeStarWpm = Math.min(45 + (level - 1) * 3, 70);
   // WPM floor for 2★: starts at 28, increases by 2 per level, caps at 45
-  const twoStarWpm   = Math.min(28 + (level - 1) * 2, 45);
+  const twoStarWpm = Math.min(28 + (level - 1) * 2, 45);
 
   if (accuracy >= threeStarAcc && wpm >= threeStarWpm) return 3;
-  if (accuracy >= twoStarAcc   && wpm >= twoStarWpm)   return 2;
+  if (accuracy >= twoStarAcc && wpm >= twoStarWpm) return 2;
   return 1;
 }
 

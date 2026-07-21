@@ -59,16 +59,25 @@ const AVATAR_EMOJIS: Record<string, string> = {
 };
 
 function NavigationLayout() {
-  const { user, logout } = useAuth();
+  const { user, loading, logout } = useAuth();
   const [activeTab, setActiveTab] = useState<'arena' | 'leaderboards' | 'multiplayer' | 'profile'>('arena');
 
-  // If user clicks profile or multiplayer but is not logged in, redirect them to auth screen if needed,
-  // or allow guest profile. For multiplayer, we enforce authentication.
   const handleTabClick = (tab: 'arena' | 'leaderboards' | 'multiplayer' | 'profile') => {
     setActiveTab(tab);
   };
 
   const renderContent = () => {
+    if (loading) {
+      return (
+        <div className="flex min-h-[60vh] items-center justify-center text-cyan-400">
+          <div className="flex flex-col items-center gap-3">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
+            <span className="animate-pulse text-xs font-bold tracking-widest uppercase">Initializing Hero Session...</span>
+          </div>
+        </div>
+      );
+    }
+
     if (!user && (activeTab === 'arena' || activeTab === 'multiplayer' || activeTab === 'profile')) {
       return <AuthPage />;
     }
@@ -107,7 +116,7 @@ function NavigationLayout() {
           </div>
 
           {/* Navigation Links */}
-          {user && (
+          {(user || loading) && (
             <nav className="flex items-center gap-1.5 md:gap-4">
               {[
                 { id: 'arena', label: 'Arena', icon: '🎮' },
@@ -133,7 +142,9 @@ function NavigationLayout() {
 
           {/* Auth Button */}
           <div className="flex items-center gap-3">
-            {user ? (
+            {loading ? (
+              <div className="h-7 w-24 animate-pulse rounded-xl bg-slate-900/80 border border-slate-800" />
+            ) : user ? (
               <div className="flex items-center gap-2">
                 <div className="bg-slate-950/60 border border-slate-800 rounded-xl px-2.5 py-1 flex items-center gap-1.5">
                   <span className="text-sm">{AVATAR_EMOJIS[user.avatarId] || '🛡️'}</span>
