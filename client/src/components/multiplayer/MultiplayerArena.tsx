@@ -54,8 +54,8 @@ export default function MultiplayerArena({
 
   return (
     <div className="space-y-6">
-      {/* Result Modal — only show when the server has confirmed our rank via race_finish_ack */}
-      {serverRank !== null && completedStats && (
+      {/* Result Modal — show as soon as player finishes; rank fills in when server confirms */}
+      {completedStats && (
         <ResultModal
           stats={completedStats}
           rank={serverRank}

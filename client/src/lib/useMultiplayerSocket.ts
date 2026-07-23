@@ -154,6 +154,7 @@ export function useMultiplayerSocket() {
         // Server confirms this player's final rank — this is the source of truth
         setServerRank(msg.rank);
         setIsRacing(false);
+        hasFinishedRef.current = true; // immediately stop the timer interval
         break;
       case 'race_results':
         setRoom(msg.room);

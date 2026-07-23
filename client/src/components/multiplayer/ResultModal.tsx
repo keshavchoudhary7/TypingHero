@@ -1,12 +1,13 @@
 type ResultModalProps = {
   stats: { wpm: number; accuracy: number; timeMs: number } | null;
-  rank: number;
+  rank: number | null; // null = awaiting server confirmation
   onRematch: () => void;
   onLeaveRoom: () => void;
 };
 
 export default function ResultModal({ stats, rank, onRematch, onLeaveRoom }: ResultModalProps) {
   const isWinner = rank === 1;
+  const rankPending = rank === null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
@@ -14,28 +15,36 @@ export default function ResultModal({ stats, rank, onRematch, onLeaveRoom }: Res
         {/* Glow backdrop behind card */}
         <div
           className={`absolute -top-20 left-1/2 -translate-x-1/2 h-40 w-40 rounded-full blur-[70px] pointer-events-none ${
-            isWinner ? 'bg-amber-500/25' : 'bg-indigo-500/25'
+            rankPending ? 'bg-slate-500/20' : isWinner ? 'bg-amber-500/25' : 'bg-indigo-500/25'
           }`}
         />
 
-        {/* Victory / Defeat Header */}
+        {/* Victory / Defeat / Loading Header */}
         <div className="relative z-10 space-y-2">
           <span className="text-6xl inline-block animate-bounce">
-            {isWinner ? '🏆' : '⚔️'}
+            {rankPending ? '⏳' : isWinner ? '🏆' : '⚔️'}
           </span>
 
           <h2
             className={`text-3xl font-black uppercase tracking-wider ${
-              isWinner
+              rankPending
+                ? 'text-slate-300'
+                : isWinner
                 ? 'bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]'
                 : 'bg-gradient-to-r from-indigo-300 via-cyan-400 to-purple-400 bg-clip-text text-transparent'
             }`}
           >
-            {isWinner ? 'VICTORY! YOU WON!' : 'RUNNER UP! GOOD RACE!'}
+            {rankPending ? 'RACE COMPLETE!' : isWinner ? 'VICTORY! YOU WON!' : 'GOOD RACE!'}
           </h2>
 
           <p className="text-xs font-mono text-slate-400 uppercase tracking-widest">
-            {isWinner ? '1st Place Winner' : `#${rank} Place Rank`}
+            {rankPending
+              ? '⏳ Confirming your rank...'
+              : rank === 1 ? '🥇 1st Place Winner'
+              : rank === 2 ? '🥈 2nd Place'
+              : rank === 3 ? '🥉 3rd Place'
+              : `🏅 ${rank}th Place`
+            }
           </p>
         </div>
 

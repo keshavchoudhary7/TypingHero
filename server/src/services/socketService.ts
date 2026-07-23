@@ -44,48 +44,62 @@ function getRandomPassage() {
 
 // ─── WebSocket Framing Protocol Implementation ──────────────────────────────
 
-function parseWSFrame(buffer: Buffer): { opcode: number; message: string } | null {
-  if (buffer.length < 2) return null;
-  const firstByte = buffer[0];
-  const secondByte = buffer[1];
-  
-  const opcode = firstByte & 0x0f;
-  const isMasked = (secondByte & 0x80) !== 0;
-  let payloadLen = secondByte & 0x7f;
-  let offset = 2;
+// Parses ALL WebSocket frames from a single TCP buffer.
+// The old single-frame parser silently dropped any second frame that arrived
+// in the same TCP segment (e.g. race_progress + race_finish sent back-to-back).
+function parseWSFrames(buffer: Buffer): { opcode: number; message: string }[] {
+  const frames: { opcode: number; message: string }[] = [];
+  let pos = 0;
 
-  // Connection close opcode
-  if (opcode === 0x8) {
-    return { opcode, message: '' };
-  }
+  while (pos < buffer.length) {
+    if (buffer.length - pos < 2) break;
 
-  if (payloadLen === 126) {
-    if (buffer.length < 4) return null;
-    payloadLen = buffer.readUInt16BE(2);
-    offset = 4;
-  } else if (payloadLen === 127) {
-    if (buffer.length < 10) return null;
-    const high = buffer.readUInt32BE(2);
-    const low = buffer.readUInt32BE(6);
-    payloadLen = high * 0x100000000 + low;
-    offset = 10;
-  }
+    const firstByte = buffer[pos];
+    const secondByte = buffer[pos + 1];
 
-  if (isMasked) {
-    if (buffer.length < offset + 4 + payloadLen) return null;
-    const maskKey = buffer.slice(offset, offset + 4);
-    offset += 4;
-    const payload = buffer.slice(offset, offset + payloadLen);
-    const decoded = Buffer.alloc(payloadLen);
-    for (let i = 0; i < payloadLen; i++) {
-      decoded[i] = payload[i] ^ maskKey[i % 4];
+    const opcode = firstByte & 0x0f;
+    const isMasked = (secondByte & 0x80) !== 0;
+    let payloadLen = secondByte & 0x7f;
+    let headerEnd = pos + 2;
+
+    // Connection close — stop parsing
+    if (opcode === 0x8) {
+      frames.push({ opcode, message: '' });
+      break;
     }
-    return { opcode, message: decoded.toString('utf8') };
-  } else {
-    if (buffer.length < offset + payloadLen) return null;
-    const payload = buffer.slice(offset, offset + payloadLen);
-    return { opcode, message: payload.toString('utf8') };
+
+    if (payloadLen === 126) {
+      if (buffer.length - pos < 4) break;
+      payloadLen = buffer.readUInt16BE(pos + 2);
+      headerEnd = pos + 4;
+    } else if (payloadLen === 127) {
+      if (buffer.length - pos < 10) break;
+      const high = buffer.readUInt32BE(pos + 2);
+      const low = buffer.readUInt32BE(pos + 6);
+      payloadLen = high * 0x100000000 + low;
+      headerEnd = pos + 10;
+    }
+
+    if (isMasked) {
+      if (buffer.length < headerEnd + 4 + payloadLen) break;
+      const maskKey = buffer.slice(headerEnd, headerEnd + 4);
+      const dataStart = headerEnd + 4;
+      const payload = buffer.slice(dataStart, dataStart + payloadLen);
+      const decoded = Buffer.alloc(payloadLen);
+      for (let i = 0; i < payloadLen; i++) {
+        decoded[i] = payload[i] ^ maskKey[i % 4];
+      }
+      frames.push({ opcode, message: decoded.toString('utf8') });
+      pos = dataStart + payloadLen;
+    } else {
+      if (buffer.length < headerEnd + payloadLen) break;
+      const payload = buffer.slice(headerEnd, headerEnd + payloadLen);
+      frames.push({ opcode, message: payload.toString('utf8') });
+      pos = headerEnd + payloadLen;
+    }
   }
+
+  return frames;
 }
 
 function sendWSMessage(socket: any, data: any) {
@@ -498,12 +512,13 @@ export function initializeWebSocketServer(server: http.Server) {
       const wsSocket = socket as any;
       wsSocket.playerId = playerId;
 
-      // Handle raw buffer data
+      // Handle raw buffer data — loop all frames to avoid dropping coalesced TCP messages
       socket.on('data', (buffer) => {
-        const frame = parseWSFrame(buffer);
-        if (frame) {
+        const frames = parseWSFrames(buffer);
+        for (const frame of frames) {
           if (frame.opcode === 0x8) {
             handleDisconnect(wsSocket);
+            break; // socket closed, stop processing
           } else {
             handleWSMessage(wsSocket, frame.message);
           }
