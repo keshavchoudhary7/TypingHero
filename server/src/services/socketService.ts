@@ -390,11 +390,12 @@ function handleWSMessage(socket: any, message: string) {
           player.wpm = Math.round(Number(payload.wpm));
           player.accuracy = Math.round(Number(payload.accuracy));
           player.timeMs = Number(payload.elapsedMs);
-          player.finished = true;
 
-          // Assign placement rank based on how many have finished before this player
-          const finishers = room.players.filter((p) => p.finished).length;
-          player.rank = finishers;
+          // Count players who ALREADY finished BEFORE marking this player done
+          // This ensures ranks are 1st, 2nd, 3rd, 4th — not everyone getting rank 1
+          const finishedBefore = room.players.filter((p) => p.finished).length;
+          player.finished = true;
+          player.rank = finishedBefore + 1;
 
           // Send rank confirmation directly to this player immediately
           sendWSMessage(socket, {
