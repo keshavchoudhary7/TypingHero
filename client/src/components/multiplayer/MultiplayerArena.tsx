@@ -34,7 +34,7 @@ export default function MultiplayerArena({
   serverRank,
   textareaRef,
   isHost,
-  currentUsername,
+  currentUsername: _currentUsername,
   onCopyInviteLink,
   onLeaveRoom,
   onStartCustomRace,
