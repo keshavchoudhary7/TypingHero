@@ -293,15 +293,6 @@ function DashboardPage() {
   }, [generateActiveChallenge, user?.id, token]);
 
 
-  // ─── Entry animations ────────────────────────────────────────────────────
-  useEffect(() => {
-    if (!dashboardRef.current) return undefined;
-    const ctx = gsap.context(() => {
-      gsap.from('.metric-card', { duration: 0.9, y: 24, opacity: 0, stagger: 0.08, ease: 'power3.out' });
-    }, dashboardRef);
-    return () => ctx.revert();
-  }, []);
-
   useEffect(() => {
     if (status !== 'finished' || !winRef.current) return undefined;
     setShowWinBurst(true);
@@ -726,11 +717,11 @@ function DashboardPage() {
 
               {/* Metrics: 5 tiles — WPM, Net WPM, Accuracy, Errors, Progress */}
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
-                <MetricTile label="WPM" value={stats.wpm} accent="cyan" subtitle="Gross" />
-                <MetricTile label="Net WPM" value={stats.netWpm} accent="violet" subtitle="Adjusted" />
-                <MetricTile label="Accuracy" value={`${stats.accuracy}%`} accent="emerald" subtitle="Precision" />
-                <MetricTile label="Errors" value={stats.incorrectChars} accent="rose" subtitle="Mistakes" />
-                <MetricTile label="Progress" value={`${progress}%`} accent="amber" subtitle="Completion" />
+                <MetricTile label="WPM" value={stats.wpm} accent="cyan" subtitle="Gross" className="metric-card-animate" />
+                <MetricTile label="Net WPM" value={stats.netWpm} accent="violet" subtitle="Adjusted" className="metric-card-animate delay-1" />
+                <MetricTile label="Accuracy" value={`${stats.accuracy}%`} accent="emerald" subtitle="Precision" className="metric-card-animate delay-2" />
+                <MetricTile label="Errors" value={stats.incorrectChars} accent="rose" subtitle="Mistakes" className="metric-card-animate delay-3" />
+                <MetricTile label="Progress" value={`${progress}%`} accent="amber" subtitle="Completion" className="metric-card-animate delay-4" />
               </div>
 
               {/* Progress + Combo row */}
