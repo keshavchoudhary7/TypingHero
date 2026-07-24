@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type ClipboardEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
 import { gsap } from 'gsap';
 import {
   calculateStats,
@@ -382,8 +382,8 @@ function DashboardPage() {
     setStatus('running');
   }, [isRunning, elapsedMs]);
 
-  const blockPaste = (e: ClipboardEvent<HTMLElement>) => e.preventDefault();
-  const blockCopy  = (e: ClipboardEvent<HTMLElement>) => e.preventDefault();
+  const blockPaste = (e: any) => e.preventDefault();
+  const blockCopy  = (e: any) => e.preventDefault();
 
   const handleInput = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const nextValue = event.target.value.slice(0, passage.length);

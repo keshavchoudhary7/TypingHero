@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useAuth } from '../lib/authContext';
+import { useAuth, type User } from '../lib/authContext';
 import { getHeroRank } from '../lib/xp';
 
 type ProfilePageProps = {
@@ -27,17 +27,19 @@ const PREMIUM_AVATARS = [
 
 const NEXT_RANK_TITLES = ['Apprentice','Practitioner','Specialist','Expert','Master','Grandmaster','Legend',''];
 
-// ─── Edit Profile Modal ───────────────────────────────────────────────────────
 function EditProfileModal({
-  currentUsername,
+  currentUser,
   onClose,
   onSave,
 }: {
-  currentUsername: string;
+  currentUser: User;
   onClose: () => void;
-  onSave: (newUsername: string) => Promise<void>;
+  onSave: (username: string, displayName: string, bio: string, country: string) => Promise<void>;
 }) {
-  const [username, setUsername] = useState(currentUsername);
+  const [username, setUsername] = useState(currentUser.username);
+  const [displayName, setDisplayName] = useState(currentUser.displayName || '');
+  const [bio, setBio] = useState(currentUser.bio || '');
+  const [country, setCountry] = useState(currentUser.country || '');
   const [saving, setSaving]   = useState(false);
   const [error, setError]     = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -48,14 +50,23 @@ function EditProfileModal({
   }, []);
 
   const handleSave = async () => {
-    const trimmed = username.trim();
-    if (trimmed.length < 3)           { setError('Must be at least 3 characters.'); return; }
-    if (trimmed.length > 20)          { setError('Must be at most 20 characters.'); return; }
-    if (!/^[a-zA-Z0-9_]+$/.test(trimmed)) { setError('Only letters, numbers & underscores.'); return; }
-    if (trimmed === currentUsername)  { onClose(); return; }
+    const trimmedUsername = username.trim();
+    if (trimmedUsername.length < 3)           { setError('Username must be at least 3 characters.'); return; }
+    if (trimmedUsername.length > 20)          { setError('Username must be at most 20 characters.'); return; }
+    if (!/^[a-zA-Z0-9_]+$/.test(trimmedUsername)) { setError('Username: only letters, numbers & underscores.'); return; }
+
+    const trimmedDisplayName = displayName.trim();
+    if (trimmedDisplayName.length > 30) { setError('Display name must be at most 30 characters.'); return; }
+
+    const trimmedBio = bio.trim();
+    if (trimmedBio.length > 160) { setError('Bio must be at most 160 characters.'); return; }
+
+    const trimmedCountry = country.trim();
+    if (trimmedCountry.length > 50) { setError('Country must be at most 50 characters.'); return; }
+
     setSaving(true);
     try {
-      await onSave(trimmed);
+      await onSave(trimmedUsername, trimmedDisplayName, trimmedBio, trimmedCountry);
       onClose();
     } catch (e: any) {
       setError(e.message || 'Failed to update. Try again.');
@@ -129,19 +140,91 @@ function EditProfileModal({
           </div>
         </div>
 
-        {/* Coming-soon fields */}
-        <div
-          className="mb-5 rounded-xl border p-4 opacity-45 select-none"
-          style={{ background: 'rgba(5,10,20,0.5)', borderColor: 'rgba(100,116,139,0.12)' }}
-        >
-          <p className="text-[8px] font-bold uppercase tracking-widest text-slate-500 mb-2.5">
-            🔒 More Fields — Unlock with Premium
-          </p>
-          {['Display Name', 'Bio / Status', 'Country / Region'].map((f) => (
-            <div key={f} className="h-8 rounded-lg bg-slate-900/50 flex items-center px-3 mb-1.5 last:mb-0">
-              <span className="text-[10px] text-slate-600">{f}</span>
-            </div>
-          ))}
+        {/* Display Name field */}
+        <div className="mb-5">
+          <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+            Display Name
+          </label>
+          <input
+            type="text"
+            value={displayName}
+            onChange={(e) => { setDisplayName(e.target.value); setError(''); }}
+            maxLength={30}
+            placeholder="Enter public display name"
+            spellCheck={false}
+            className="w-full rounded-xl border px-4 py-3 text-sm font-bold text-white outline-none transition-all font-mono"
+            style={{
+              background: 'rgba(5,10,20,0.9)',
+              borderColor: 'rgba(0,245,255,0.2)',
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(0,245,255,0.55)';
+              e.currentTarget.style.boxShadow = '0 0 0 2px rgba(0,245,255,0.09), 0 0 20px rgba(0,245,255,0.05)';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(0,245,255,0.2)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          />
+        </div>
+
+        {/* Bio / Status field */}
+        <div className="mb-5">
+          <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+            Bio / Status
+          </label>
+          <textarea
+            value={bio}
+            onChange={(e) => { setBio(e.target.value); setError(''); }}
+            maxLength={160}
+            rows={2}
+            placeholder="Tell us about yourself..."
+            spellCheck={false}
+            className="w-full rounded-xl border px-4 py-3 text-sm font-bold text-white outline-none transition-all resize-none font-mono"
+            style={{
+              background: 'rgba(5,10,20,0.9)',
+              borderColor: 'rgba(0,245,255,0.2)',
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(0,245,255,0.55)';
+              e.currentTarget.style.boxShadow = '0 0 0 2px rgba(0,245,255,0.09), 0 0 20px rgba(0,245,255,0.05)';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(0,245,255,0.2)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          />
+          <div className="flex justify-end mt-1">
+            <p className="text-[10px] text-slate-600 font-mono">{bio.length}/160</p>
+          </div>
+        </div>
+
+        {/* Country / Region field */}
+        <div className="mb-6">
+          <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+            Country / Region
+          </label>
+          <input
+            type="text"
+            value={country}
+            onChange={(e) => { setCountry(e.target.value); setError(''); }}
+            maxLength={50}
+            placeholder="e.g. United States, India"
+            spellCheck={false}
+            className="w-full rounded-xl border px-4 py-3 text-sm font-bold text-white outline-none transition-all font-mono"
+            style={{
+              background: 'rgba(5,10,20,0.9)',
+              borderColor: 'rgba(0,245,255,0.2)',
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(0,245,255,0.55)';
+              e.currentTarget.style.boxShadow = '0 0 0 2px rgba(0,245,255,0.09), 0 0 20px rgba(0,245,255,0.05)';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(0,245,255,0.2)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          />
         </div>
 
         {/* Actions */}
@@ -207,7 +290,7 @@ function StatCard({ label, value, color, icon }: { label: string; value: string;
 
 // ─── Main Profile Page ────────────────────────────────────────────────────────
 export default function ProfilePage({ completedLevels, levelResults, streak, totalXp }: ProfilePageProps) {
-  const { user, updateAvatar, updateUsername } = useAuth();
+  const { user, updateAvatar, updateUsername, updateProfile } = useAuth();
   const [updatingId, setUpdatingId]     = useState<string | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
 
@@ -228,19 +311,30 @@ export default function ProfilePage({ completedLevels, levelResults, streak, tot
     setUpdatingId(null);
   };
 
-  const handleSaveUsername = async (newUsername: string) => {
-    if (!updateUsername) throw new Error('Update not supported');
-    const ok = await updateUsername(newUsername);
-    if (!ok) throw new Error('Username may already be taken. Try another.');
+  const handleSaveProfile = async (
+    newUsername: string,
+    newDisplayName: string,
+    newBio: string,
+    newCountry: string
+  ) => {
+    if (newUsername !== user?.username) {
+      if (!updateUsername) throw new Error('Update not supported');
+      const ok = await updateUsername(newUsername);
+      if (!ok) throw new Error('Username may already be taken. Try another.');
+    }
+    if (updateProfile) {
+      const okProfile = await updateProfile(newDisplayName, newBio, newCountry);
+      if (!okProfile) throw new Error('Failed to update profile fields.');
+    }
   };
 
   return (
     <>
-      {showEditModal && (
+      {showEditModal && user && (
         <EditProfileModal
-          currentUsername={user?.username || ''}
+          currentUser={user}
           onClose={() => setShowEditModal(false)}
-          onSave={handleSaveUsername}
+          onSave={handleSaveProfile}
         />
       )}
 
@@ -301,7 +395,7 @@ export default function ProfilePage({ completedLevels, levelResults, streak, tot
               {/* Hero info */}
               <div className="flex-1 text-center sm:text-left min-w-0">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 flex-wrap">
-                  {/* Username — truncated with max-w so it never breaks layout */}
+                  {/* Display Name / Username */}
                   <h1
                     className="text-2xl sm:text-3xl font-black tracking-tight bg-gradient-to-r from-cyan-300 via-white to-indigo-300 bg-clip-text text-transparent"
                     style={{
@@ -310,10 +404,15 @@ export default function ProfilePage({ completedLevels, levelResults, streak, tot
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
                     }}
-                    title={user?.username || 'Hero'}
+                    title={user?.displayName || user?.username || 'Hero'}
                   >
-                    {user?.username || 'Hero'}
+                    {user?.displayName || user?.username || 'Hero'}
                   </h1>
+                  {user?.displayName && (
+                    <span className="text-xs font-bold text-slate-500 font-mono self-center sm:translate-y-1">
+                      @{user.username}
+                    </span>
+                  )}
                   <button
                     id="edit-profile-btn"
                     onClick={() => setShowEditModal(true)}
@@ -330,7 +429,19 @@ export default function ProfilePage({ completedLevels, levelResults, streak, tot
                   <span style={{ color: rankInfo.color }}>{rankInfo.icon} {rankInfo.title}</span>
                   <span className="text-slate-700">·</span>
                   <span className="text-slate-500">{totalLevelsCompleted} levels cleared</span>
+                  {user?.country && (
+                    <>
+                      <span className="text-slate-700">·</span>
+                      <span className="text-slate-400">📍 {user.country}</span>
+                    </>
+                  )}
                 </p>
+
+                {user?.bio && (
+                  <p className="text-xs text-slate-400 mt-2.5 italic max-w-md sm:text-left border-l-2 border-slate-800 pl-3 leading-relaxed">
+                    "{user.bio}"
+                  </p>
+                )}
 
                 {/* XP bar */}
                 <div className="mt-4 w-full max-w-sm mx-auto sm:mx-0">

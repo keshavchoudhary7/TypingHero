@@ -29,6 +29,10 @@ export async function requireAuth(req: any, res: any, next: any) {
       id: user._id.toString(),
       username: user.username,
       avatarId: user.avatarId || 'knight',
+      displayName: user.displayName || '',
+      bio: user.bio || '',
+      country: user.country || '',
+      isAnonymous: user.isAnonymous || false,
     };
     next();
   } catch (error) {
@@ -101,6 +105,10 @@ router.post('/register', async (req, res) => {
         id: userId,
         username: trimmedUsername,
         avatarId: selectedAvatar,
+        displayName: '',
+        bio: '',
+        country: '',
+        isAnonymous: false,
       }
     });
   } catch (error) {
@@ -136,6 +144,10 @@ router.post('/login', async (req, res) => {
         id: userId,
         username: user.username,
         avatarId: user.avatarId || 'knight',
+        displayName: user.displayName || '',
+        bio: user.bio || '',
+        country: user.country || '',
+        isAnonymous: user.isAnonymous || false,
       }
     });
   } catch (error) {
@@ -296,7 +308,11 @@ router.post('/oauth-register', async (req, res) => {
       user: {
         id: userId,
         username: uniqueUsername,
-        avatarId: selectedAvatar
+        avatarId: selectedAvatar,
+        displayName: '',
+        bio: '',
+        country: '',
+        isAnonymous: false,
       }
     });
   } catch (err: any) {
@@ -350,13 +366,59 @@ router.post('/oauth-login', async (req, res) => {
       user: {
         id: userId,
         username: user.username,
-        avatarId: user.avatarId || 'knight'
+        avatarId: user.avatarId || 'knight',
+        displayName: user.displayName || '',
+        bio: user.bio || '',
+        country: user.country || '',
+        isAnonymous: user.isAnonymous || false,
       }
     });
   } catch (err: any) {
     console.error('OAuth login error:', err);
     return res.status(400).json({ error: err.message || 'OAuth login failed.' });
   }
+});
+
+// ─── POST /profile ──────────────────────────────────────────────────────────
+router.post('/profile', requireAuth, async (req: any, res) => {
+  const { displayName, bio, country } = req.body;
+  const updates: any = {};
+
+  if (displayName !== undefined) {
+    const trimmed = displayName.trim();
+    if (trimmed.length > 30) {
+      return res.status(400).json({ error: 'Display name must be at most 30 characters.' });
+    }
+    updates.displayName = trimmed;
+  }
+  if (bio !== undefined) {
+    const trimmed = bio.trim();
+    if (trimmed.length > 160) {
+      return res.status(400).json({ error: 'Bio must be at most 160 characters.' });
+    }
+    updates.bio = trimmed;
+  }
+  if (country !== undefined) {
+    const trimmed = country.trim();
+    if (trimmed.length > 50) {
+      return res.status(400).json({ error: 'Country must be at most 50 characters.' });
+    }
+    updates.country = trimmed;
+  }
+
+  try {
+    const db = await getDatabase();
+    await db.collection('users').updateOne(
+      { _id: new ObjectId(req.user.id) },
+      { $set: updates }
+    );
+    return res.json({ success: true, updates });
+  } catch (error) {
+    console.error('Failed to update profile:', error);
+    return res.status(500).json({ error: 'Failed to update profile.' });
+  }
+});
+
 // ─── POST /anonymous-login ──────────────────────────────────────────────────
 router.post('/anonymous-login', async (req, res) => {
   const { idToken } = req.body;
@@ -441,6 +503,9 @@ router.post('/anonymous-login', async (req, res) => {
         id: userId,
         username,
         avatarId,
+        displayName: user ? (user.displayName || '') : '',
+        bio: user ? (user.bio || '') : '',
+        country: user ? (user.country || '') : '',
         isAnonymous: true,
       }
     });

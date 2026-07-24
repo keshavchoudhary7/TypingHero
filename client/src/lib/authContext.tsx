@@ -12,6 +12,9 @@ export type User = {
   id: string;
   username: string;
   avatarId: string;
+  displayName?: string;
+  bio?: string;
+  country?: string;
   isAnonymous?: boolean;
 };
 
@@ -28,6 +31,7 @@ type AuthContextType = {
   playAsGuest: () => void;
   updateAvatar: (avatarId: string) => Promise<boolean>;
   updateUsername: (username: string) => Promise<boolean>;
+  updateProfile: (displayName: string, bio: string, country: string) => Promise<boolean>;
   clearError: () => void;
 };
 
@@ -198,6 +202,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return false;
     }
   };
+  const updateProfile = async (displayName: string, bio: string, country: string): Promise<boolean> => {
+    if (!token) return false;
+    try {
+      const response = await fetch(`${API_BASE}/api/auth/profile`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ displayName, bio, country }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          setUser((prev) => (prev ? { ...prev, displayName, bio, country } : null));
+          return true;
+        }
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  };
 
   const loginWithOAuth = async (providerName: 'google'): Promise<boolean> => {
     setError(null);
@@ -316,6 +344,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         playAsGuest,
         updateAvatar,
         updateUsername,
+        updateProfile,
         clearError,
       }}
     >

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const MECHANICAL_KEYS_LEFT = [
   { char: 'Q', row: 0, col: 0, delay: '1.2s' },
@@ -56,7 +56,7 @@ export default function TypingBackground() {
 
   // Typewriter effect simulator
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: any;
     const targetLine = CODE_LINES[currentLineIndex];
 
     if (currentCharIndex < targetLine.length) {
