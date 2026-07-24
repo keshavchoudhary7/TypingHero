@@ -333,6 +333,8 @@ export function useMultiplayerSocket() {
     sendWSMessage({ type: 'leave_room' });
   };
 
+  const blockPaste = (e: { preventDefault: () => void }) => e.preventDefault();
+
   const handleInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
     if (!room || (!isRacing && room.status !== 'racing') || hasFinishedRef.current) return;
     const passage = room.passage || '';
@@ -399,6 +401,7 @@ export function useMultiplayerSocket() {
     leaveRoom,
     copyInviteLink,
     handleInput,
+    blockPaste,
     connectSocket,
     calculateWpm,
     calculateAccuracy,

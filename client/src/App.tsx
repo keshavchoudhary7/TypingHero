@@ -114,18 +114,79 @@ function NavigationLayout() {
 
       {/* Navigation Header */}
       <header className="relative z-10 border-b border-slate-900 bg-[#0a0e1c]/60 backdrop-blur-md">
-        <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveTab('arena')}>
-            <span className="text-xl">🛡️</span>
-            <span className="font-black uppercase tracking-wider text-white text-sm bg-gradient-to-r from-cyan-400 to-indigo-400 bg-clip-text text-transparent">
-              TypingHeroes
-            </span>
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
+
+          {/* Top Row: Logo + Auth */}
+          <div className="flex items-center justify-between py-2.5 sm:py-3">
+            {/* Logo */}
+            <div
+              className="flex items-center gap-1.5 sm:gap-2 cursor-pointer shrink-0"
+              onClick={() => setActiveTab('arena')}
+            >
+              <span className="text-lg sm:text-xl leading-none">🛡️</span>
+              <span className="font-black uppercase tracking-wider text-white text-xs sm:text-sm bg-gradient-to-r from-cyan-400 to-indigo-400 bg-clip-text text-transparent whitespace-nowrap">
+                TypingHeroes
+              </span>
+            </div>
+
+            {/* Desktop Nav — visible md+ */}
+            {(user || loading) && (
+              <nav className="hidden md:flex items-center gap-1">
+                {[
+                  { id: 'arena', label: 'Arena', icon: '🎮' },
+                  { id: 'leaderboards', label: 'Leaderboards', icon: '🏆' },
+                  { id: 'multiplayer', label: 'Multiplayer', icon: '⚔️' },
+                  { id: 'profile', label: 'Profile', icon: '👤' },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => handleTabClick(tab.id as any)}
+                    className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                      activeTab === tab.id
+                        ? 'bg-slate-900 border border-slate-800 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.05)]'
+                        : 'text-slate-400 hover:text-slate-200 border border-transparent'
+                    }`}
+                  >
+                    <span>{tab.icon}</span>
+                    <span>{tab.label}</span>
+                  </button>
+                ))}
+              </nav>
+            )}
+
+            {/* Auth Button */}
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+              {loading ? (
+                <div className="h-7 w-16 sm:w-24 animate-pulse rounded-xl bg-slate-900/80 border border-slate-800" />
+              ) : user ? (
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <div className="bg-slate-950/60 border border-slate-800 rounded-xl px-2 sm:px-2.5 py-1 flex items-center gap-1 sm:gap-1.5 overflow-hidden">
+                    <span className="text-sm leading-none shrink-0">{AVATAR_EMOJIS[user.avatarId] || '🛡️'}</span>
+                    <span className="text-xs font-bold text-slate-300 font-mono hidden sm:inline truncate max-w-[80px] md:max-w-[120px]">
+                      {user.username}
+                    </span>
+                  </div>
+                  <button
+                    onClick={logout}
+                    className="cursor-pointer rounded-xl border border-red-500/25 bg-red-500/5 hover:bg-red-500/10 px-2 sm:px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-red-400 transition-colors whitespace-nowrap"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => handleTabClick('profile')}
+                  className="cursor-pointer rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:brightness-110 px-3 sm:px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-md transition-all active:scale-[0.98] whitespace-nowrap"
+                >
+                  Login
+                </button>
+              )}
+            </div>
           </div>
 
-          {/* Navigation Links */}
+          {/* Mobile Nav Row — visible below md */}
           {(user || loading) && (
-            <nav className="flex items-center gap-1.5 md:gap-4">
+            <div className="md:hidden border-t border-slate-900/60 py-1.5 flex items-center justify-center gap-1 overflow-x-auto no-scrollbar">
               {[
                 { id: 'arena', label: 'Arena', icon: '🎮' },
                 { id: 'leaderboards', label: 'Leaderboards', icon: '🏆' },
@@ -135,51 +196,25 @@ function NavigationLayout() {
                 <button
                   key={tab.id}
                   onClick={() => handleTabClick(tab.id as any)}
-                  className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                  className={`flex items-center gap-1 rounded-xl px-2.5 py-1.5 text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                     activeTab === tab.id
                       ? 'bg-slate-900 border border-slate-800 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.05)]'
                       : 'text-slate-400 hover:text-slate-200 border border-transparent'
                   }`}
                 >
-                  <span>{tab.icon}</span>
-                  <span className="hidden sm:inline">{tab.label}</span>
+                  <span className="text-sm leading-none">{tab.icon}</span>
+                  <span>{tab.label}</span>
                 </button>
               ))}
-            </nav>
+            </div>
           )}
 
-          {/* Auth Button */}
-          <div className="flex items-center gap-3">
-            {loading ? (
-              <div className="h-7 w-24 animate-pulse rounded-xl bg-slate-900/80 border border-slate-800" />
-            ) : user ? (
-              <div className="flex items-center gap-2">
-                <div className="bg-slate-950/60 border border-slate-800 rounded-xl px-2.5 py-1 flex items-center gap-1.5">
-                  <span className="text-sm">{AVATAR_EMOJIS[user.avatarId] || '🛡️'}</span>
-                  <span className="text-xs font-bold text-slate-300 font-mono hidden md:inline">{user.username}</span>
-                </div>
-                <button
-                  onClick={logout}
-                  className="cursor-pointer rounded-xl border border-red-500/25 bg-red-500/5 hover:bg-red-500/10 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-red-400 transition-colors"
-                >
-                  Logout
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => handleTabClick('profile')}
-                className="cursor-pointer rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:brightness-110 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-md transition-all active:scale-[0.98]"
-              >
-                Login
-              </button>
-            )}
-          </div>
         </div>
       </header>
 
       {/* Main Content Area */}
-      <main className="relative z-10 flex-grow py-6">
-        <div className="mx-auto max-w-7xl px-4">
+      <main className="relative z-10 flex-grow py-4 sm:py-6">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6">
           {renderContent()}
         </div>
       </main>

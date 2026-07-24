@@ -10,6 +10,9 @@ export default function TypingPrompt({ passage, typed, onFocusRequest }: TypingP
   return (
     <div
       onClick={onFocusRequest}
+      onCopy={(e) => e.preventDefault()}
+      onCut={(e) => e.preventDefault()}
+      onContextMenu={(e) => e.preventDefault()}
       className="relative rounded-2xl bg-[#060a17]/95 border border-slate-800/90 p-7 font-mono text-xl md:text-2xl leading-relaxed tracking-wide select-none shadow-[0_0_35px_rgba(0,0,0,0.6)] backdrop-blur-xl cursor-text transition-all hover:border-slate-700 font-medium"
     >
       <div className="absolute top-2.5 right-4 text-[9px] font-bold font-mono text-slate-600 uppercase tracking-widest pointer-events-none">

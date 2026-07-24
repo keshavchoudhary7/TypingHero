@@ -4,6 +4,23 @@ import RaceTrack from '../game/RaceTrack';
 import TypingPrompt from './TypingPrompt';
 import ResultModal from './ResultModal';
 
+const AVATAR_EMOJIS: Record<string, string> = {
+  knight: '🛡️',
+  wizard: '🔮',
+  rogue: '🗡️',
+  ranger: '🏹',
+  cleric: '❇️',
+};
+
+// Per-avatar glow colours for the waiting room badge
+const AVATAR_GLOW: Record<string, { ring: string; shadow: string; bg: string }> = {
+  knight: { ring: 'border-cyan-400/60',    shadow: 'shadow-[0_0_18px_4px_rgba(6,182,212,0.45)]',    bg: 'bg-cyan-950/60'    },
+  wizard: { ring: 'border-purple-400/60',  shadow: 'shadow-[0_0_18px_4px_rgba(168,85,247,0.45)]',   bg: 'bg-purple-950/60'  },
+  rogue:  { ring: 'border-rose-400/60',    shadow: 'shadow-[0_0_18px_4px_rgba(251,113,133,0.45)]',  bg: 'bg-rose-950/60'    },
+  ranger: { ring: 'border-emerald-400/60', shadow: 'shadow-[0_0_18px_4px_rgba(52,211,153,0.45)]',   bg: 'bg-emerald-950/60' },
+  cleric: { ring: 'border-amber-400/60',   shadow: 'shadow-[0_0_18px_4px_rgba(251,191,36,0.45)]',   bg: 'bg-amber-950/60'   },
+};
+
 type MultiplayerArenaProps = {
   room: Room;
   countdown: number | null;
@@ -20,6 +37,7 @@ type MultiplayerArenaProps = {
   onStartCustomRace: () => void;
   onRematch: () => void;
   onHandleInput: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+  onBlockPaste: (e: { preventDefault: () => void }) => void;
   calculateWpm: (typed?: string, timeMs?: number) => number;
   calculateAccuracy: (passage?: string, typed?: string) => number;
 };
@@ -40,6 +58,7 @@ export default function MultiplayerArena({
   onStartCustomRace,
   onRematch,
   onHandleInput,
+  onBlockPaste,
   calculateWpm,
   calculateAccuracy,
 }: MultiplayerArenaProps) {
@@ -110,21 +129,38 @@ export default function MultiplayerArena({
             <span>Invite Friends (Copy Link)</span>
           </button>
 
-          <div className="flex flex-wrap justify-center gap-3 mb-6">
-            {room.players.map((p) => (
-              <div
-                key={p.id}
-                className="flex items-center gap-2 rounded-xl bg-slate-950/80 border border-slate-900 px-4 py-2.5"
-              >
-                <span>🛡️</span>
-                <span className="text-xs font-bold font-mono text-slate-300">{p.username}</span>
-                {p.isHost && (
-                  <span className="rounded-full px-1.5 py-0.5 text-[8px] bg-indigo-950 text-indigo-400 border border-indigo-800 font-bold uppercase">
-                    Host
-                  </span>
-                )}
-              </div>
-            ))}
+          <div className="flex flex-wrap justify-center gap-4 mb-6">
+            {room.players.map((p) => {
+              const glow = AVATAR_GLOW[p.avatarId] ?? AVATAR_GLOW.knight;
+              return (
+                <div
+                  key={p.id}
+                  className="flex flex-col items-center gap-2 rounded-2xl bg-slate-950/90 border border-slate-800 px-5 py-4 min-w-[100px] relative overflow-visible"
+                >
+                  {/* Glowing avatar badge */}
+                  <div className={`relative flex-shrink-0 flex items-center justify-center w-14 h-14 rounded-2xl ${glow.bg} border-2 ${glow.ring} ${glow.shadow} transition-all duration-300`}>
+                    {/* Outer pulse ring */}
+                    <div className={`absolute inset-0 rounded-2xl border-2 ${glow.ring} animate-ping opacity-30 pointer-events-none`} />
+                    <span className="text-3xl select-none" style={{ lineHeight: 1 }}>
+                      {AVATAR_EMOJIS[p.avatarId] ?? '🛡️'}
+                    </span>
+                  </div>
+
+                  {/* Username + class */}
+                  <div className="flex flex-col items-center gap-0.5">
+                    <span className="text-xs font-bold font-mono text-slate-100 leading-tight text-center">{p.username}</span>
+                    <span className="text-[10px] font-mono text-slate-500 uppercase leading-tight">{p.avatarId}</span>
+                  </div>
+
+                  {/* Host badge */}
+                  {p.isHost && (
+                    <span className="absolute -top-2 -right-2 rounded-full px-2 py-0.5 text-[8px] bg-indigo-600 text-white border border-indigo-400 font-bold uppercase shadow-[0_0_8px_rgba(99,102,241,0.6)]">
+                      Host
+                    </span>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {isHost ? (
@@ -214,6 +250,8 @@ export default function MultiplayerArena({
                 ref={textareaRef}
                 value={typed}
                 onChange={onHandleInput}
+                onPaste={onBlockPaste}
+                onDrop={onBlockPaste}
                 placeholder="Type the text above..."
                 className="w-full h-24 rounded-2xl border border-slate-800/90 bg-[#090d1f]/90 px-5 py-4 text-base font-mono text-slate-100 placeholder-slate-600 outline-none focus:border-cyan-400 focus:shadow-[0_0_25px_rgba(6,182,212,0.2)] resize-none transition-all duration-200"
                 spellCheck={false}

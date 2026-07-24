@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type ClipboardEvent } from 'react';
 import { gsap } from 'gsap';
 import {
   calculateStats,
@@ -381,6 +381,9 @@ function DashboardPage() {
     setIsRunning(true);
     setStatus('running');
   }, [isRunning, elapsedMs]);
+
+  const blockPaste = (e: ClipboardEvent<HTMLElement>) => e.preventDefault();
+  const blockCopy  = (e: ClipboardEvent<HTMLElement>) => e.preventDefault();
 
   const handleInput = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const nextValue = event.target.value.slice(0, passage.length);
@@ -779,7 +782,13 @@ function DashboardPage() {
                 </div>
 
                 {/* ─── Character-level word display ─── */}
-                <div className="mb-5 rounded-xl p-4" style={{ background: 'rgba(5,8,16,0.8)', border: '1px solid rgba(30,41,59,0.5)', minHeight: '5.5rem' }}>
+                <div
+                  className="mb-5 rounded-xl p-4"
+                  style={{ background: 'rgba(5,8,16,0.8)', border: '1px solid rgba(30,41,59,0.5)', minHeight: '5.5rem', userSelect: 'none' }}
+                  onCopy={blockCopy}
+                  onCut={blockCopy}
+                  onContextMenu={(e) => e.preventDefault()}
+                >
                   <p className="flex flex-wrap gap-x-2 gap-y-2 leading-8" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1rem' }}>
                     {charFeedback.map((segment, wIdx) => {
                       const isActiveWord = segment.active;
@@ -831,6 +840,8 @@ function DashboardPage() {
                   ref={textareaRef}
                   value={typed}
                   onChange={handleInput}
+                  onPaste={blockPaste}
+                  onDrop={blockPaste}
                   placeholder={
                     isGeneratingActive ? '⏳ AI is preparing this challenge...'
                       : !unlocked ? '🔒 Complete the previous level to unlock.'

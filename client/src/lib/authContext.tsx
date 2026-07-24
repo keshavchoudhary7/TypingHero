@@ -24,6 +24,7 @@ type AuthContextType = {
   loginWithOAuth: (providerName: 'google') => Promise<boolean>;
   registerWithOAuth: (providerName: 'google', avatarId?: string) => Promise<boolean>;
   logout: () => void;
+  playAsGuest: () => void;
   updateAvatar: (avatarId: string) => Promise<boolean>;
   updateUsername: (username: string) => Promise<boolean>;
   clearError: () => void;
@@ -261,6 +262,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const playAsGuest = () => {
+    setError(null);
+    setUser({
+      id: `guest-${Math.random().toString(36).substring(2, 11)}`,
+      username: `Guest Hero ${Math.floor(1000 + Math.random() * 9000)}`,
+      avatarId: 'knight',
+    });
+    setToken(null);
+    setLoading(false);
+  };
+
   const clearError = () => setError(null);
 
   return (
@@ -275,6 +287,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loginWithOAuth,
         registerWithOAuth,
         logout,
+        playAsGuest,
         updateAvatar,
         updateUsername,
         clearError,

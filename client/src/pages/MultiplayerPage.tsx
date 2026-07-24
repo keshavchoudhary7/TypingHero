@@ -32,6 +32,7 @@ export default function MultiplayerPage() {
     leaveRoom,
     copyInviteLink,
     handleInput,
+    blockPaste,
     connectSocket,
     calculateWpm,
     calculateAccuracy,
@@ -136,6 +137,7 @@ export default function MultiplayerPage() {
             onStartCustomRace={startCustomRace}
             onRematch={rematch}
             onHandleInput={handleInput}
+            onBlockPaste={blockPaste}
             calculateWpm={calculateWpm}
             calculateAccuracy={calculateAccuracy}
           />
