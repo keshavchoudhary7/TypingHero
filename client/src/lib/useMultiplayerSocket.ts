@@ -252,20 +252,19 @@ export function useMultiplayerSocket() {
 
   const calculateWpm = (currentTyped?: string, timeMs?: number) => {
     const safeTyped = currentTyped || '';
-    const safeTime = timeMs || 1;
-    if (safeTime <= 0) return 0;
+    const safeTime = Math.max(timeMs || 0, 1000);
     return Math.round((safeTyped.length / 5) / (safeTime / 1000 / 60));
   };
 
-  // Local race timer + 45s MAX limit auto-finish
+  // Local race timer + 60s MAX limit auto-finish
   useEffect(() => {
     if (!isRacing || startedAt === null || hasFinishedRef.current) return undefined;
     const interval = window.setInterval(() => {
       const currentElapsed = Date.now() - startedAt;
       setElapsedMs(currentElapsed);
 
-      // 45 seconds MAX race limit auto-finish
-      if (currentElapsed >= 45000 && !hasFinishedRef.current) {
+      // 60 seconds MAX race limit auto-finish
+      if (currentElapsed >= 60000 && !hasFinishedRef.current) {
         hasFinishedRef.current = true;
         const passage = roomRef.current?.passage || '';
         const currentWpm = calculateWpm(typed, currentElapsed);
@@ -351,7 +350,7 @@ export function useMultiplayerSocket() {
       wpm,
     });
 
-    if (nextValue === passage && passage.length > 0) {
+    if (nextValue.length === passage.length && passage.length > 0) {
       hasFinishedRef.current = true;
       const acc = calculateAccuracy(passage, nextValue);
       setIsRacing(false);

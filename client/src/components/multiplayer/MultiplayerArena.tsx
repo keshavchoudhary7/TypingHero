@@ -69,7 +69,7 @@ export default function MultiplayerArena({
     textareaRef.current?.focus();
   };
 
-  const remainingSeconds = Math.max(0, Math.ceil((45000 - elapsedMs) / 1000));
+  const remainingSeconds = Math.max(0, Math.ceil((60000 - elapsedMs) / 1000));
 
   return (
     <div className="space-y-6">

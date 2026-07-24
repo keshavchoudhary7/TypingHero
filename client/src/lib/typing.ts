@@ -30,7 +30,7 @@ export type Level = {
 };
 
 export function calculateStats({ passage, typed, elapsedMs }: CalculateStatsArgs): TypingStats {
-  const safeElapsedMs = Math.max(elapsedMs, 1);
+  const safeElapsedMs = Math.max(elapsedMs, 1000);
   const typedChars = typed.split('');
   const passageChars = passage.split('');
 

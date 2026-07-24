@@ -196,16 +196,7 @@ function DashboardPage() {
     });
   }, [passage, typed]);
 
-  // ─── Timer ───────────────────────────────────────────────────────────────
-  useEffect(() => {
-    if (!isRunning || startedAt === null) return undefined;
-    const timer = window.setInterval(() => setElapsedMs(Date.now() - startedAt), 100);
-    return () => window.clearInterval(timer);
-  }, [isRunning, startedAt]);
 
-  useEffect(() => {
-    if (typed === passage) { setIsRunning(false); setStatus('finished'); }
-  }, [passage, typed]);
 
   // ─── Stats ───────────────────────────────────────────────────────────────
   const stats = useMemo(() => calculateStats({ passage, typed, elapsedMs }), [elapsedMs, passage, typed]);
@@ -376,10 +367,118 @@ function DashboardPage() {
   const blockPaste = (e: any) => e.preventDefault();
   const blockCopy  = (e: any) => e.preventDefault();
 
+  const completeMatch = useCallback((currentTypedText: string, currentElapsedMs: number) => {
+    setIsRunning(false);
+    setStatus('finished');
+    setShowVictoryPopup(true);
+
+    const nextStats = calculateStats({ passage, typed: currentTypedText, elapsedMs: currentElapsedMs });
+    const stars = getLevelStars({ accuracy: nextStats.accuracy, wpm: nextStats.wpm, level: activeLevel.id });
+    const prevResult = levelResults[activeLevel.id];
+    const isNewPB = !prevResult || nextStats.wpm > prevResult.wpm;
+    if (isNewPB) { setNewPB(true); setTimeout(() => setNewPB(false), 3500); }
+    const nextResults: Record<number, LevelResult> = {
+      ...levelResults,
+      [activeLevel.id]: { accuracy: nextStats.accuracy, wpm: nextStats.wpm, netWpm: nextStats.netWpm, stars },
+    };
+    const nextCompleted = completedLevels.includes(activeLevel.id) ? completedLevels : [...completedLevels, activeLevel.id];
+    setLevelResults(nextResults);
+    setCompletedLevels(nextCompleted);
+
+    // ── M3: XP + streak ────────────────────────────────────────────────
+    const dailyId = getDailyLevelId(challengePool.length);
+    const isDaily = activeLevel.id === dailyId && !isDailyDone(dailyChallengeDoneDate);
+    const gain = calculateXP({
+      wpm: nextStats.wpm,
+      accuracy: nextStats.accuracy,
+      stars,
+      difficulty: activeLevel.difficulty as 'Easy' | 'Medium' | 'Hard',
+      isDaily,
+    });
+    const newTotalXp = totalXp + gain.total;
+    const prevRank = getHeroRank(totalXp);
+    const newRank = getHeroRank(newTotalXp);
+    const rankUp = newRank.level > prevRank.level ? newRank : null;
+    const { streak: newStreak, lastPlayedDate: newLastPlayed } = computeStreak({ lastPlayedDate, currentStreak: streak });
+    const newDailyDone = isDaily ? new Date().toISOString().slice(0, 10) : dailyChallengeDoneDate;
+    setTotalXp(newTotalXp);
+    setStreak(newStreak);
+    setLastPlayedDate(newLastPlayed);
+    setDailyChallengeDoneDate(newDailyDone);
+    setXpGain(gain);
+    if (rankUp) setLeveledUp(rankUp);
+
+    // Calculate challenge outcome if active
+    if (challengeData) {
+      setChallengeResult({
+        won: nextStats.wpm >= challengeData.wpm,
+        challengerWpm: challengeData.wpm,
+        challengerAccuracy: challengeData.accuracy,
+        challengerName: challengeData.challengerName,
+        playerWpm: nextStats.wpm,
+        playerAccuracy: nextStats.accuracy,
+      });
+    } else {
+      setChallengeResult(null);
+    }
+    // ─────────────────────────────────────────────────────────────────
+
+    void persistProgress(nextCompleted, nextResults, activeLevel.id, {
+      xp: newTotalXp, streak: newStreak, lastPlayedDate: newLastPlayed, dailyChallengeDoneDate: newDailyDone,
+    });
+
+    // ── Leaderboard Submission with Anti-cheat ───────────────────────
+    void (async () => {
+      try {
+        await fetch(`${API_BASE}/api/leaderboard/submit`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({
+            levelId: activeLevel.id,
+            wpm: nextStats.wpm,
+            accuracy: nextStats.accuracy,
+            elapsedMs: currentElapsedMs,
+            passage,
+            stars,
+            logs: keystrokeLogsRef.current,
+            username: user?.username || 'Guest Hero',
+            avatarId: user?.avatarId || 'knight',
+          }),
+        });
+      } catch (err) {
+        console.error('Failed to submit score to leaderboard:', err);
+      }
+    })();
+
+    const nextLevelNumber = activeLevel.id + 1;
+    if (!generatedLevelIdsRef.current.has(nextLevelNumber)) {
+      void generateChallenge(nextLevelNumber).then((gen) => { if (gen) setPendingNextChallenge(gen); });
+    }
+  }, [
+    passage, activeLevel, levelResults, completedLevels, totalXp, streak, lastPlayedDate, dailyChallengeDoneDate, challengeData, challengePool.length, token, user, persistProgress, generateChallenge
+  ]);
+
+  // ─── Timer ───────────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!isRunning || startedAt === null) return undefined;
+    const timer = window.setInterval(() => {
+      const currentElapsed = Date.now() - startedAt;
+      if (currentElapsed >= 60000) {
+        setElapsedMs(60000);
+        completeMatch(typed, 60000);
+      } else {
+        setElapsedMs(currentElapsed);
+      }
+    }, 100);
+    return () => window.clearInterval(timer);
+  }, [isRunning, startedAt, typed, completeMatch]);
+
   const handleInput = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const nextValue = event.target.value.slice(0, passage.length);
     const currentElapsed = isRunning ? Date.now() - (startedAt ?? Date.now()) : elapsedMs;
-    const nextStats = calculateStats({ passage, typed: nextValue, elapsedMs: currentElapsed });
 
     // Log keypress timings for anti-cheat verification
     if (nextValue.length > typed.length) {
@@ -391,94 +490,8 @@ function DashboardPage() {
     setTyped(nextValue);
     if (nextValue.length > 0 && !isRunning && status !== 'paused') startTyping();
 
-    if (nextValue === passage) {
-      setIsRunning(false);
-      setStatus('finished');
-      setShowVictoryPopup(true);
-      const stars = getLevelStars({ accuracy: nextStats.accuracy, wpm: nextStats.wpm, level: activeLevel.id });
-      const prevResult = levelResults[activeLevel.id];
-      const isNewPB = !prevResult || nextStats.wpm > prevResult.wpm;
-      if (isNewPB) { setNewPB(true); setTimeout(() => setNewPB(false), 3500); }
-      const nextResults: Record<number, LevelResult> = {
-        ...levelResults,
-        [activeLevel.id]: { accuracy: nextStats.accuracy, wpm: nextStats.wpm, netWpm: nextStats.netWpm, stars },
-      };
-      const nextCompleted = completedLevels.includes(activeLevel.id) ? completedLevels : [...completedLevels, activeLevel.id];
-      setLevelResults(nextResults);
-      setCompletedLevels(nextCompleted);
-
-      // ── M3: XP + streak ────────────────────────────────────────────────
-      const dailyId = getDailyLevelId(challengePool.length);
-      const isDaily = activeLevel.id === dailyId && !isDailyDone(dailyChallengeDoneDate);
-      const gain = calculateXP({
-        wpm: nextStats.wpm,
-        accuracy: nextStats.accuracy,
-        stars,
-        difficulty: activeLevel.difficulty as 'Easy' | 'Medium' | 'Hard',
-        isDaily,
-      });
-      const newTotalXp = totalXp + gain.total;
-      const prevRank = getHeroRank(totalXp);
-      const newRank = getHeroRank(newTotalXp);
-      const rankUp = newRank.level > prevRank.level ? newRank : null;
-      const { streak: newStreak, lastPlayedDate: newLastPlayed } = computeStreak({ lastPlayedDate, currentStreak: streak });
-      const newDailyDone = isDaily ? new Date().toISOString().slice(0, 10) : dailyChallengeDoneDate;
-      setTotalXp(newTotalXp);
-      setStreak(newStreak);
-      setLastPlayedDate(newLastPlayed);
-      setDailyChallengeDoneDate(newDailyDone);
-      setXpGain(gain);
-      if (rankUp) setLeveledUp(rankUp);
-
-      // Calculate challenge outcome if active
-      if (challengeData) {
-        setChallengeResult({
-          won: nextStats.wpm >= challengeData.wpm,
-          challengerWpm: challengeData.wpm,
-          challengerAccuracy: challengeData.accuracy,
-          challengerName: challengeData.challengerName,
-          playerWpm: nextStats.wpm,
-          playerAccuracy: nextStats.accuracy,
-        });
-      } else {
-        setChallengeResult(null);
-      }
-      // ─────────────────────────────────────────────────────────────────
-
-      void persistProgress(nextCompleted, nextResults, activeLevel.id, {
-        xp: newTotalXp, streak: newStreak, lastPlayedDate: newLastPlayed, dailyChallengeDoneDate: newDailyDone,
-      });
-
-      // ── Leaderboard Submission with Anti-cheat ───────────────────────
-      void (async () => {
-        try {
-          await fetch(`${API_BASE}/api/leaderboard/submit`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
-            body: JSON.stringify({
-              levelId: activeLevel.id,
-              wpm: nextStats.wpm,
-              accuracy: nextStats.accuracy,
-              elapsedMs: currentElapsed,
-              passage,
-              stars,
-              logs: keystrokeLogsRef.current,
-              username: user?.username || 'Guest Hero',
-              avatarId: user?.avatarId || 'knight',
-            }),
-          });
-        } catch (err) {
-          console.error('Failed to submit score to leaderboard:', err);
-        }
-      })();
-
-      const nextLevelNumber = activeLevel.id + 1;
-      if (!generatedLevelIdsRef.current.has(nextLevelNumber)) {
-        void generateChallenge(nextLevelNumber).then((gen) => { if (gen) setPendingNextChallenge(gen); });
-      }
+    if (nextValue.length === passage.length && passage.length > 0) {
+      completeMatch(nextValue, currentElapsed);
     }
   };
 
@@ -764,11 +777,22 @@ function DashboardPage() {
                       {isGeneratingActive ? 'Generating challenge...' : unlocked ? 'Active Challenge' : 'Locked'}
                     </span>
                   </div>
-                  {status === 'running' && (
-                    <span className="rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-widest"
-                      style={{ background: 'rgba(57,255,20,0.1)', border: '1px solid rgba(57,255,20,0.3)', color: '#39ff14', animation: 'live-pulse 1.2s ease-in-out infinite' }}>
-                      ● LIVE
-                    </span>
+                  {(status === 'running' || status === 'paused') && (
+                    <div className="flex items-center gap-3">
+                      <span className={`text-xs font-bold font-mono px-2.5 py-0.5 rounded-lg border ${
+                        elapsedMs >= 50000 
+                          ? 'bg-rose-500/10 border-rose-500/30 text-rose-400 animate-pulse' 
+                          : 'bg-indigo-500/10 border-indigo-500/20 text-indigo-300'
+                      }`}>
+                        ⏱️ {Math.max(0, Math.ceil((60000 - elapsedMs) / 1000))}s left
+                      </span>
+                      {status === 'running' && (
+                        <span className="rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-widest"
+                          style={{ background: 'rgba(57,255,20,0.1)', border: '1px solid rgba(57,255,20,0.3)', color: '#39ff14', animation: 'live-pulse 1.2s ease-in-out infinite' }}>
+                          ● LIVE
+                        </span>
+                      )}
+                    </div>
                   )}
                 </div>
 

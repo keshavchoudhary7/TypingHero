@@ -37,7 +37,8 @@ export function validateAttempt(params: {
 
   // 2. WPM Calculation Check
   // WPM = (characters / 5) / (minutes)
-  const calculatedWpm = Math.round((passage.length / 5) / (elapsedMs / 1000 / 60));
+  const safeElapsedMs = Math.max(elapsedMs, 1000);
+  const calculatedWpm = Math.round((passage.length / 5) / (safeElapsedMs / 1000 / 60));
   const wpmDifference = Math.abs(wpm - calculatedWpm);
   
   if (wpmDifference > 8) {
