@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import { signInWithPopup } from 'firebase/auth';
+import { signInWithPopup, signInAnonymously, signOut } from 'firebase/auth';
 import {
   auth as firebaseAuth,
   googleProvider,
@@ -12,6 +12,7 @@ export type User = {
   id: string;
   username: string;
   avatarId: string;
+  isAnonymous?: boolean;
 };
 
 type AuthContextType = {
@@ -142,7 +143,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await signOut(firebaseAuth);
+    } catch (err) {
+      console.error('Firebase signOut error:', err);
+    }
     setUser(null);
     setToken(null);
     localStorage.removeItem('typinghero_token');
@@ -262,15 +268,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const playAsGuest = () => {
+  const playAsGuest = async () => {
     setError(null);
-    setUser({
-      id: `guest-${Math.random().toString(36).substring(2, 11)}`,
-      username: `Guest Hero ${Math.floor(1000 + Math.random() * 9000)}`,
-      avatarId: 'knight',
-    });
-    setToken(null);
-    setLoading(false);
+    setLoading(true);
+    try {
+      const userCredential = await signInAnonymously(firebaseAuth);
+      const idToken = await userCredential.user.getIdToken();
+
+      const response = await fetch(`${API_BASE}/api/auth/anonymous-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+      });
+
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        setError(data.error || 'Anonymous login failed');
+        setLoading(false);
+        return;
+      }
+
+      setToken(data.token);
+      setUser(data.user);
+      localStorage.setItem('typinghero_token', data.token);
+      setLoading(false);
+    } catch (err: any) {
+      console.error('Anonymous login error:', err);
+      setError(err.message || 'Failed to authenticate anonymously.');
+      setLoading(false);
+    }
   };
 
   const clearError = () => setError(null);

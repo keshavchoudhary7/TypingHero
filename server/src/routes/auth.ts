@@ -357,6 +357,98 @@ router.post('/oauth-login', async (req, res) => {
     console.error('OAuth login error:', err);
     return res.status(400).json({ error: err.message || 'OAuth login failed.' });
   }
+// ─── POST /anonymous-login ──────────────────────────────────────────────────
+router.post('/anonymous-login', async (req, res) => {
+  const { idToken } = req.body;
+  if (!idToken) {
+    return res.status(400).json({ error: 'Firebase ID Token is required' });
+  }
+
+  try {
+    const decoded = await verifyFirebaseToken(idToken);
+    const { uid } = decoded;
+
+    const db = await getDatabase();
+
+    // Check if the user already exists in the database with this Firebase UID
+    let user = await db.collection('users').findOne({ firebaseUid: uid });
+    let userId: string;
+    let username: string;
+    let avatarId = 'knight';
+
+    if (!user) {
+      // Create a unique guest username
+      const baseUsername = 'GuestHero';
+      let uniqueUsername = baseUsername;
+      let exists = true;
+      let counter = 0;
+
+      while (exists) {
+        const found = await db.collection('users').findOne({
+          username: { $regex: new RegExp(`^${uniqueUsername}$`, 'i') }
+        });
+        if (!found) {
+          exists = false;
+        } else {
+          counter++;
+          uniqueUsername = `${baseUsername}${counter}`;
+        }
+      }
+
+      username = uniqueUsername;
+
+      const result = await db.collection('users').insertOne({
+        username: uniqueUsername,
+        firebaseUid: uid,
+        avatarId: avatarId,
+        provider: 'anonymous',
+        isAnonymous: true,
+        createdAt: new Date(),
+      });
+
+      userId = result.insertedId.toString();
+
+      // Initialize progress document
+      await db.collection('progress').updateOne(
+        { userId },
+        {
+          $setOnInsert: {
+            userId,
+            completedLevels: [],
+            levelResults: {},
+            activeLevelId: null,
+            xp: 0,
+            streak: 0,
+            lastPlayedDate: null,
+            dailyChallengeDoneDate: null,
+            updatedAt: new Date(),
+          }
+        },
+        { upsert: true }
+      );
+    } else {
+      userId = user._id.toString();
+      username = user.username;
+      avatarId = user.avatarId || 'knight';
+    }
+
+    const token = signToken({ userId, username });
+
+    return res.json({
+      success: true,
+      token,
+      user: {
+        id: userId,
+        username,
+        avatarId,
+        isAnonymous: true,
+      }
+    });
+  } catch (err: any) {
+    console.error('Anonymous login error:', err);
+    return res.status(400).json({ error: err.message || 'Anonymous login failed.' });
+  }
 });
 
 export default router;
+
