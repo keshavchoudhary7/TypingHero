@@ -26,20 +26,13 @@ type Room = {
   countdownTimer?: NodeJS.Timeout;
 };
 
+import { getRandomMultiplayerPassage } from '../lib/passages.js';
+
 const rooms = new Map<string, Room>();
 const matchmakingQueue: { id: string; socket: any; username: string; avatarId: string }[] = [];
 
-// Sample passages for multiplayer races
-const MULTIPLAYER_PASSAGES = [
-  { levelId: 101, passage: 'Deep in the Whispering Woods, a rogue shadows the sleeping dragon, waiting for the crystal to glow.' },
-  { levelId: 102, passage: 'Mages of the Obsidian Citadel chant old runes of power, locking the gates against the invading iron army.' },
-  { levelId: 103, passage: 'The swift archer draws her golden bow, aiming at the target glowing on top of the ancient stone ruins.' },
-  { levelId: 104, passage: 'Valiant knights shield the castle gates as wizards conjure celestial fires to protect the realm.' },
-  { levelId: 105, passage: 'Under the blood moon, shadow blades duel on the high rooftops of the forgotten desert city.' }
-];
-
 function getRandomPassage() {
-  return MULTIPLAYER_PASSAGES[Math.floor(Math.random() * MULTIPLAYER_PASSAGES.length)];
+  return getRandomMultiplayerPassage();
 }
 
 // ─── WebSocket Framing Protocol Implementation ──────────────────────────────
