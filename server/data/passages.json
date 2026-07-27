@@ -1,0 +1,830 @@
+{
+  "easy": [
+    {
+      "id": "easy-1",
+      "title": "Consistent Practice",
+      "passage": "\"Don't chase speed,\" the instructor said; \"build accuracy first, then let confidence follow naturally.\"",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-2",
+      "title": "Morning Momentum",
+      "passage": "Every successful morning begins with discipline: wake early, organize priorities, and avoid unnecessary distractions.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-3",
+      "title": "Fresh Perspective",
+      "passage": "Sometimes, the smallest adjustment creates the greatest improvement; never underestimate consistent effort.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-4",
+      "title": "Hidden Trail",
+      "passage": "The narrow pathway wasn't obvious, yet careful observation revealed footprints leading toward the ancient bridge.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-5",
+      "title": "Coffee Conversation",
+      "passage": "\"It's surprisingly quiet today,\" Emma remarked, stirring her coffee before checking tomorrow's schedule.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-6",
+      "title": "Weekend Escape",
+      "passage": "Mountains, rivers, forests, and waterfalls formed an unforgettable landscape; every photograph captured another memory.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-7",
+      "title": "Balanced Routine",
+      "passage": "Exercise improves concentration, reduces stress, and strengthens discipline; skipping today's workout affects tomorrow's progress.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-8",
+      "title": "Unexpected Delay",
+      "passage": "\"We'll arrive a little later,\" the driver explained, \"because heavy traffic blocked the highway entrance.\"",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-9",
+      "title": "Evening Reflection",
+      "passage": "Before sleeping, write three achievements, acknowledge one mistake, and prepare tomorrow's priorities.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-10",
+      "title": "Technology Today",
+      "passage": "Modern smartphones combine communication, entertainment, navigation, photography, and productivity into one compact device.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-11",
+      "title": "The Library",
+      "passage": "\"Knowledge isn't collected accidentally,\" the librarian smiled; \"it's discovered through curiosity.\"",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-12",
+      "title": "Ocean Breeze",
+      "passage": "Powerful waves crashed against rocky cliffs, while seabirds circled gracefully above the sparkling coastline.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-13",
+      "title": "Focused Mind",
+      "passage": "Concentration isn't about ignoring everything else; it's about choosing what deserves your attention.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-14",
+      "title": "Friendly Competition",
+      "passage": "\"Ready?\" Liam asked. \"Absolutely,\" Sophia replied; both competitors smiled before the countdown started.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-15",
+      "title": "City Lights",
+      "passage": "Neon reflections covered rain-soaked streets, creating colorful patterns beneath every passing vehicle.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-16",
+      "title": "Healthy Choices",
+      "passage": "Fresh vegetables, seasonal fruits, whole grains, and clean water contribute significantly to long-term health.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-17",
+      "title": "Creative Thinking",
+      "passage": "Innovation rarely appears without persistence; remarkable ideas often begin as ordinary observations.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-18",
+      "title": "Airport Terminal",
+      "passage": "\"Flight A-214 is now boarding,\" the announcement echoed across the crowded departure lounge.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-19",
+      "title": "Mountain Air",
+      "passage": "Cool winds carried the scent of pine trees, wildflowers, and freshly fallen rain across the valley.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-20",
+      "title": "Programming Basics",
+      "passage": "Writing clean code requires patience, consistency, and thoughtful problem-solving; shortcuts usually create future bugs.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-21",
+      "title": "Daily Improvement",
+      "passage": "\"Practice every day,\" the mentor advised, \"because improvement compounds faster than motivation.\"",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-22",
+      "title": "Train Journey",
+      "passage": "Passengers quietly watched distant mountains, winding rivers, and peaceful villages disappear beyond the windows.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-23",
+      "title": "Clear Communication",
+      "passage": "Misunderstandings often begin with assumptions; asking thoughtful questions prevents unnecessary confusion.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-26",
+      "title": "Deadline Ahead",
+      "passage": "\"We've got exactly 15 minutes,\" the manager warned; everyone closed unnecessary tabs, reviewed today's checklist, and focused immediately.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-27",
+      "title": "Code Review",
+      "passage": "Readable code isn't written by accident; it's produced through patience, revision, and careful attention to every meaningful detail.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-28",
+      "title": "Autumn Wind",
+      "passage": "Golden leaves drifted across the pathway, circled the fountain, then disappeared beneath old wooden benches.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-29",
+      "title": "First Impression",
+      "passage": "\"Smile first,\" she whispered, \"because confidence is remembered long after introductions are forgotten.\"",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-30",
+      "title": "Research Notes",
+      "passage": "Observe carefully, document consistently, and verify every conclusion; assumptions rarely survive close examination.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-31",
+      "title": "Night Flight",
+      "passage": "Flight B-307 departed precisely at 9:45 p.m.; passengers applauded when the aircraft climbed above the clouds.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-32",
+      "title": "Product Launch",
+      "passage": "\"Today's objective: stability,\" the engineer explained; \"new features can always wait until tomorrow.\"",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-33",
+      "title": "Quiet Confidence",
+      "passage": "People often notice consistency before brilliance; dependable effort quietly earns lasting respect.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-34",
+      "title": "Weekend Market",
+      "passage": "Fresh vegetables, handmade bread, locally grown berries, and fragrant flowers filled every colorful marketplace stall.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-35",
+      "title": "Clear Decision",
+      "passage": "\"Should we continue?\" Olivia asked. \"Absolutely,\" Daniel replied, \"we're closer than ever before.\"",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-36",
+      "title": "Mountain Sunrise",
+      "passage": "Orange sunlight reached distant peaks first, leaving deep valleys cool, silent, and beautifully untouched.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-37",
+      "title": "Focused Practice",
+      "passage": "Improvement requires repetition—not perfection; each thoughtful attempt strengthens tomorrow's performance.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-38",
+      "title": "Unexpected Discovery",
+      "passage": "\"Look over there,\" Mia exclaimed; hidden beneath the fallen branches was an antique compass.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-39",
+      "title": "Study Session",
+      "passage": "Highlight important ideas, summarize difficult concepts, and revisit confusing chapters before the final review.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-40",
+      "title": "Creative Workshop",
+      "passage": "Artists exchanged sketches, shared constructive criticism, and celebrated everyone's unique perspective.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-41",
+      "title": "Digital Workspace",
+      "passage": "\"Save your progress,\" the notification reminded, \"unexpected interruptions happen more frequently than expected.\"",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-42",
+      "title": "Coffee Shop",
+      "passage": "Fresh espresso, warm croissants, soft music, and friendly conversations created an inviting atmosphere.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-43",
+      "title": "The Interview",
+      "passage": "\"Why should we hire you?\" the interviewer asked. She answered calmly, confidently, and honestly.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-44",
+      "title": "Navigation",
+      "passage": "According to the GPS, the destination was only 2.4 miles away; traffic, however, suggested otherwise.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-45",
+      "title": "Precision",
+      "passage": "Accuracy matters more than speed; mistakes consume valuable time that careful typing would have prevented.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-46",
+      "title": "Rainstorm",
+      "passage": "\"Close every window!\" someone shouted, as thunder echoed across the valley and lightning illuminated the hills.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-47",
+      "title": "Hidden Potential",
+      "passage": "Every remarkable achievement begins with an ordinary decision: start today, remain patient, and never quit early.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-48",
+      "title": "Museum Visit",
+      "passage": "Ancient sculptures, detailed paintings, handwritten journals, and priceless artifacts filled every exhibition hall.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-49",
+      "title": "Friendly Reminder",
+      "passage": "\"Don't forget tomorrow's meeting,\" Alex texted; \"arrive at least 10 minutes early.\"",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-50",
+      "title": "Steady Victory",
+      "passage": "Winning isn't about one extraordinary performance; it's about hundreds of disciplined decisions, repeated every single day.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-51",
+      "title": "Version Update",
+      "passage": "Version v2.3.1 fixed several issues; however, developers still recommended reviewing the release notes before updating.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-52",
+      "title": "Morning Brief",
+      "passage": "\"Good morning, everyone,\" the presenter began. \"Today's agenda (briefly): planning, testing, and deployment.\"",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-53",
+      "title": "Fitness Goals",
+      "passage": "Walking 8,000 steps daily isn't impossible; consistency, not perfection, creates meaningful progress.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-54",
+      "title": "Weekend Coding",
+      "passage": "Emma solved three programming problems, reviewed yesterday's mistakes, and finally understood recursion.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-55",
+      "title": "Conference Hall",
+      "passage": "\"Please silence your phones,\" the organizer announced; every attendee nodded before the keynote speech.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-56",
+      "title": "Travel Plans",
+      "passage": "Our itinerary included Paris, Rome, and Vienna; surprisingly, every flight departed on schedule.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-57",
+      "title": "Precision Matters",
+      "passage": "Accuracy reached 98.4%, yet the coach insisted, \"There's always room for improvement.\"",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-58",
+      "title": "Quiet Focus",
+      "passage": "Turn off notifications, close unused tabs, and concentrate on one objective at a time.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-59",
+      "title": "Book Club",
+      "passage": "Readers discussed memorable characters, unexpected endings, and thought-provoking themes until sunset.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-60",
+      "title": "The Shortcut",
+      "passage": "\"That route looks shorter,\" Noah said; unfortunately, the bridge was temporarily closed.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-61",
+      "title": "Software Notes",
+      "passage": "Install the update, restart the application, and verify every feature before reporting new issues.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-62",
+      "title": "Rainy Commute",
+      "passage": "Heavy rain reduced visibility; nevertheless, traffic continued moving slowly and safely through downtown.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-63",
+      "title": "Friendly Debate",
+      "passage": "\"Cats or dogs?\" someone asked. Opinions differed, but the conversation remained cheerful.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-64",
+      "title": "Museum Tour",
+      "passage": "Ancient maps, handwritten letters, and restored paintings attracted visitors from around the world.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-65",
+      "title": "Quick Reminder",
+      "passage": "\"Don't forget,\" she smiled, \"every small improvement counts more than occasional perfection.\"",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-66",
+      "title": "Study Notes",
+      "passage": "Review difficult chapters first (especially mathematics); easier topics can wait until tomorrow.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-67",
+      "title": "Fresh Start",
+      "passage": "Every sunrise offers another opportunity: learn something useful, help someone else, and stay curious.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-68",
+      "title": "The Meeting",
+      "passage": "\"We'll begin at 10:30 a.m.,\" the coordinator explained; everyone arrived five minutes early.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-69",
+      "title": "City Marathon",
+      "passage": "Thousands participated; only a handful finished with record-breaking times, despite challenging weather conditions.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-70",
+      "title": "Evening Reading",
+      "passage": "Reading before bedtime improves vocabulary, strengthens imagination, and encourages lifelong learning habits.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-71",
+      "title": "Photography Walk",
+      "passage": "Golden sunlight reflected across the lake, creating breathtaking colors that disappeared within minutes.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-72",
+      "title": "Project Checklist",
+      "passage": "Complete the design, test every feature, document changes, and publish the final release.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-73",
+      "title": "Weekend Escape",
+      "passage": "\"Let's leave early,\" Ava suggested. \"Less traffic means more time to explore.\"",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-74",
+      "title": "Healthy Routine",
+      "passage": "Drink enough water, sleep consistently, exercise regularly, and avoid unnecessary distractions whenever possible.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-75",
+      "title": "Winning Mindset",
+      "passage": "Champions aren't defined by talent alone; discipline, patience, and resilience shape lasting success.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-76",
+      "title": "Final Revision",
+      "passage": "\"Before submitting,\" the instructor reminded, \"proofread everything—twice, if necessary; small mistakes often matter most.\"",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-77",
+      "title": "AI Discussion",
+      "passage": "Artificial intelligence (A.I.) evolves rapidly; however, human creativity remains difficult to replicate completely.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-78",
+      "title": "Performance Review",
+      "passage": "Your latest report achieved 99.2% accuracy; nevertheless, documentation could still be more comprehensive.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-79",
+      "title": "Daily Journal",
+      "passage": "\"Write honestly,\" she advised. \"Growth begins when reflection becomes a consistent habit—not an occasional task.\"",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-80",
+      "title": "Productivity Tips",
+      "passage": "Prioritize important tasks first (e.g., planning, reviewing, and organizing); postpone unnecessary distractions.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-81",
+      "title": "Airport Schedule",
+      "passage": "Flight No. 208 departed at 6:35 a.m.; fortunately, every passenger completed check-in without delays.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-82",
+      "title": "Version History",
+      "passage": "Release v3.0.5 introduced improved security, better synchronization, and significantly faster loading times.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-83",
+      "title": "Career Advice",
+      "passage": "\"Never stop learning,\" the mentor explained; \"today's expertise becomes tomorrow's foundation.\"",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-84",
+      "title": "Financial Planning",
+      "passage": "Saving consistently—even modest amounts—creates remarkable opportunities over time; discipline always compounds.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-85",
+      "title": "Technology Expo",
+      "passage": "Visitors explored robotics, cybersecurity, renewable energy, and autonomous vehicles throughout the exhibition.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-86",
+      "title": "Programming Logic",
+      "passage": "Efficient algorithms reduce unnecessary computations; elegant solutions prioritize clarity before complexity.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-87",
+      "title": "Weather Alert",
+      "passage": "\"Expect heavy rainfall,\" the forecast warned; residents secured outdoor furniture before sunset.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-88",
+      "title": "Book Recommendation",
+      "passage": "Historical biographies, scientific discoveries, and philosophical essays encourage thoughtful, lifelong curiosity.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-89",
+      "title": "Digital Security",
+      "passage": "Enable two-factor authentication (2FA), create unique passwords, and update software regularly; prevention beats recovery.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-90",
+      "title": "Mountain Expedition",
+      "passage": "The expedition covered approximately 1,250 meters before reaching the summit; breathtaking scenery rewarded every step.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-91",
+      "title": "Entrepreneurship",
+      "passage": "\"Opportunities rarely announce themselves,\" the entrepreneur remarked. \"Recognize them before others do.\"",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-92",
+      "title": "Design Principles",
+      "passage": "Good design balances functionality, accessibility, simplicity, and aesthetics; every decision influences usability.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-93",
+      "title": "Evening Reflection",
+      "passage": "Today's accomplishments weren't extraordinary individually; together, however, they represented meaningful progress.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-94",
+      "title": "Innovation Summit",
+      "passage": "\"Imagine what's possible,\" the keynote speaker challenged, \"then build it—one thoughtful decision at a time.\"",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-95",
+      "title": "Time Management",
+      "passage": "Complete essential responsibilities first; entertainment, social media, and unnecessary browsing can always wait.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-96",
+      "title": "Scientific Discovery",
+      "passage": "Researchers documented every observation carefully; reproducible evidence, rather than assumptions, guided their conclusions.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-97",
+      "title": "Creative Momentum",
+      "passage": "Ideas evolve gradually... persistence, experimentation, and thoughtful revision transform rough concepts into polished results.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-98",
+      "title": "World Explorer",
+      "passage": "Travel broadens perspective: unfamiliar cultures, languages, traditions, and cuisines reshape ordinary expectations.",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-99",
+      "title": "Communication Skills",
+      "passage": "\"Listen carefully,\" the coach emphasized, \"because understanding begins long before responding.\"",
+      "world": "Moonlit Forest"
+    },
+    {
+      "id": "easy-100",
+      "title": "Beyond Limits",
+      "passage": "Extraordinary achievement isn't accidental—it emerges from disciplined habits, consistent effort, thoughtful reflection, and unwavering determination.",
+      "world": "Moonlit Forest"
+    }
+  ],
+  "medium": [
+    {
+      "id": "medium-1",
+      "title": "Distributed Systems",
+      "passage": "\"Consistency, availability, or partition tolerance?\" the architect asked. Every distributed system eventually confronts this trade-off; choosing wisely depends on business priorities, not engineering preference alone.",
+      "world": "Crystal Coast"
+    },
+    {
+      "id": "medium-2",
+      "title": "Machine Learning",
+      "passage": "Training a neural network isn't magic; it's repeated optimization. Every epoch slightly adjusts millions of parameters, gradually minimizing prediction error until additional improvements become increasingly difficult.",
+      "world": "Crystal Coast"
+    },
+    {
+      "id": "medium-3",
+      "title": "Cyber Defense",
+      "passage": "Attackers rarely exploit sophisticated vulnerabilities first; instead, they search for forgotten credentials, weak passwords, or outdated software that administrators overlooked during routine maintenance.",
+      "world": "Crystal Coast"
+    },
+    {
+      "id": "medium-4",
+      "title": "Startup Reality",
+      "passage": "\"Build something people genuinely need,\" the investor advised. Elegant code means very little if customers don't find lasting value in the final product.",
+      "world": "Crystal Coast"
+    },
+    {
+      "id": "medium-5",
+      "title": "Space Mission",
+      "passage": "Mission Control verified oxygen reserves, communication latency, and propulsion stability before approving the spacecraft's final orbital correction burn.",
+      "world": "Crystal Coast"
+    },
+    {
+      "id": "medium-6",
+      "title": "Algorithm Design",
+      "passage": "Choosing the correct algorithm matters more than writing clever code; reducing complexity from O(n²) to O(n log n) often transforms an impractical solution into an efficient one.",
+      "world": "Crystal Coast"
+    },
+    {
+      "id": "medium-7",
+      "title": "Financial Markets",
+      "passage": "\"Volatility creates opportunity,\" experienced traders often say; however, disciplined risk management consistently outperforms emotional decision-making.",
+      "world": "Crystal Coast"
+    },
+    {
+      "id": "medium-8",
+      "title": "Cloud Infrastructure",
+      "passage": "Modern applications automatically scale across multiple regions; nevertheless, latency, monitoring, and disaster recovery remain critical engineering responsibilities.",
+      "world": "Crystal Coast"
+    },
+    {
+      "id": "medium-9",
+      "title": "Quantum Research",
+      "passage": "Quantum computers manipulate qubits instead of classical bits; although promising, today's hardware still struggles with decoherence and error correction.",
+      "world": "Crystal Coast"
+    },
+    {
+      "id": "medium-10",
+      "title": "Software Release",
+      "passage": "\"Version v4.2.8 passed every integration test,\" the release manager confirmed; deployment began precisely at 02:30 UTC without interruption.",
+      "world": "Crystal Coast"
+    },
+    {
+      "id": "medium-11",
+      "title": "Deep Ocean",
+      "passage": "Researchers deployed autonomous submersibles nearly 4,500 meters below sea level, documenting extraordinary ecosystems hidden beneath perpetual darkness.",
+      "world": "Crystal Coast"
+    },
+    {
+      "id": "medium-12",
+      "title": "Leadership",
+      "passage": "Effective leadership isn't measured by authority alone; it's demonstrated through accountability, transparency, thoughtful communication, and consistent decision-making.",
+      "world": "Crystal Coast"
+    },
+    {
+      "id": "medium-13",
+      "title": "Artificial Intelligence",
+      "passage": "\"AI won't replace curious people,\" the professor explained, \"but curious people using AI may outperform everyone else.\"",
+      "world": "Crystal Coast"
+    },
+    {
+      "id": "medium-14",
+      "title": "Data Analytics",
+      "passage": "Raw information rarely reveals meaningful insight immediately; careful visualization, statistical reasoning, and thoughtful interpretation uncover valuable business patterns.",
+      "world": "Crystal Coast"
+    },
+    {
+      "id": "medium-15",
+      "title": "Marathon Runner",
+      "passage": "Crossing the finish line required months of disciplined preparation: balanced nutrition, structured training, consistent recovery, and unwavering determination.",
+      "world": "Crystal Coast"
+    },
+    {
+      "id": "medium-16",
+      "title": "Compiler Theory",
+      "passage": "Lexical analysis, syntax parsing, semantic validation, and optimization collectively transform human-readable source code into efficient machine instructions.",
+      "world": "Crystal Coast"
+    },
+    {
+      "id": "medium-17",
+      "title": "Network Latency",
+      "passage": "\"We're averaging only 18 ms,\" the engineer reported; surprisingly, database replication—not bandwidth—caused most of yesterday's slowdown.",
+      "world": "Crystal Coast"
+    },
+    {
+      "id": "medium-18",
+      "title": "Medical Research",
+      "passage": "Clinical trials require reproducible evidence, ethical oversight, transparent reporting, and statistically significant outcomes before new treatments receive approval.",
+      "world": "Crystal Coast"
+    },
+    {
+      "id": "medium-19",
+      "title": "The Expedition",
+      "passage": "After hiking nearly 26 kilometers, the explorers finally reached an untouched glacier; every exhausting step rewarded them with breathtaking scenery.",
+      "world": "Crystal Coast"
+    },
+    {
+      "id": "medium-20",
+      "title": "Design Thinking",
+      "passage": "Successful products rarely emerge from assumptions alone; continuous feedback, rapid prototyping, and iterative improvement shape exceptional user experiences.",
+      "world": "Crystal Coast"
+    },
+    {
+      "id": "medium-21",
+      "title": "Cryptography",
+      "passage": "Encryption protects confidential information during transmission; without proper key management, however, even sophisticated algorithms become surprisingly vulnerable.",
+      "world": "Crystal Coast"
+    },
+    {
+      "id": "medium-22",
+      "title": "Scientific Method",
+      "passage": "\"Question every assumption,\" the researcher insisted. Hypotheses must survive repeated experimentation before they're accepted as reliable scientific explanations.",
+      "world": "Crystal Coast"
+    },
+    {
+      "id": "medium-23",
+      "title": "Astronomy",
+      "passage": "The James Webb Space Telescope continues revealing galaxies whose light began traveling billions of years before humanity existed.",
+      "world": "Crystal Coast"
+    },
+    {
+      "id": "medium-24",
+      "title": "Product Engineering",
+      "passage": "Outstanding software balances performance, maintainability, accessibility, scalability, and security; ignoring any one principle eventually creates expensive technical debt.",
+      "world": "Crystal Coast"
+    },
+    {
+      "id": "medium-25",
+      "title": "The Final Sprint",
+      "passage": "\"Five minutes remain,\" the coach announced. Every participant accelerated confidently, knowing preparation—not luck—would determine the final rankings.",
+      "world": "Crystal Coast"
+    },
+  ],
+  "hard": [
+    {
+      "id": "hard-1",
+      "title": "Skyforge Trial",
+      "passage": "Precision is not a talent; it is a discipline forged through thousands of repetitions. The circuit board demands accuracy above all else: one misplaced signal disrupts the entire sequence, cascading into failures that compound with every subsequent keystroke you attempt.",
+      "world": "Neon Circuit"
+    },
+    {
+      "id": "hard-2",
+      "title": "Pulse Surge",
+      "passage": "High-frequency signals do not tolerate hesitation — each pulse arrives at precisely calculated intervals, demanding that operators respond without second-guessing their instincts. The system architecture was designed for speed; its fault-tolerance mechanisms will catch minor errors, but the operator rhythm must remain unbroken throughout the entire burst cycle.",
+      "world": "Neon Circuit"
+    },
+    {
+      "id": "hard-3",
+      "title": "Nova Ascent",
+      "passage": "Highly skilled operators understand that sustained performance — the kind that separates elite typists from intermediate ones — requires deliberate, well-paced keystrokes rather than frantic bursts of activity. Cognitive load must be carefully managed; the moment you allow anxiety to dictate your finger placement, your accuracy degrades faster than any speed-training regimen can compensate for.",
+      "world": "Nova Terminal"
+    },
+    {
+      "id": "hard-4",
+      "title": "Terminal Blitz",
+      "passage": "At the highest echelons of competitive typing, the distinction between raw speed and net-adjusted performance becomes critical: a typist who sustains ninety words per minute with ninety-eight percent accuracy will always outrank one who bursts at one hundred twenty but leaves a trail of uncorrected errors. True mastery is not about velocity alone; it is about the seamless integration of cognition, motor control, and real-time error-correction that elite practitioners develop over years of deliberate, focused practice.",
+      "world": "Nova Terminal"
+    },
+    {
+      "id": "hard-5",
+      "title": "Quantum Cryptography",
+      "passage": "Cryptographic security is not merely about using large numbers; it relies on the fundamental physical principles of quantum mechanics. Eavesdroppers alter the quantum state simply by observing it, triggering immediate detection protocols that neutralize the threat before any data is compromised.",
+      "world": "Neon Circuit"
+    },
+    {
+      "id": "hard-6",
+      "title": "Compiler Optimization",
+      "passage": "Modern optimizing compilers employ sophisticated static analysis techniques, such as loop unrolling, dead-code elimination, and register allocation. Developers must write clean, expressive code while trusting the toolchain to transform high-level abstractions into highly performant machine instructions.",
+      "world": "Nova Terminal"
+    },
+    {
+      "id": "hard-7",
+      "title": "Deep Learning Architecture",
+      "passage": "Neural networks process high-dimensional tensors through layers of parameterized mathematical operations, adjusting their internal weights via gradient descent. The optimization landscape is laden with saddle points, requiring adaptive learning rates to achieve convergence on complex datasets.",
+      "world": "Neon Circuit"
+    }
+  ],
+  "multiplayer": [
+    {
+      "levelId": 101,
+      "passage": "Deep in the Whispering Woods, a rogue shadows the sleeping dragon, waiting for the crystal to glow."
+    },
+    {
+      "levelId": 102,
+      "passage": "Mages of the Obsidian Citadel chant old runes of power, locking the gates against the invading iron army."
+    },
+    {
+      "levelId": 103,
+      "passage": "The swift archer draws her golden bow, aiming at the target glowing on top of the ancient stone ruins."
+    },
+    {
+      "levelId": 104,
+      "passage": "Valiant knights shield the castle gates as wizards conjure celestial fires to protect the realm."
+    },
+    {
+      "levelId": 105,
+      "passage": "Under the blood moon, shadow blades duel on the high rooftops of the forgotten desert city."
+    },
+    {
+      "levelId": 106,
+      "passage": "Steampunk airships soar above the copper clouds, seeking lost cities of brass and steam."
+    },
+    {
+      "levelId": 107,
+      "passage": "Cybernetic hackers breach the digital mainframe, racing to steal the encrypted corporate secrets."
+    },
+    {
+      "levelId": 108,
+      "passage": "Astronauts navigate the asteroid field, avoiding space debris while maintaining communication with Earth."
+    },
+    {
+      "levelId": 109,
+      "passage": "Ocean explorers search the deep trenches, discovering bioluminescent creatures never before seen by human eyes."
+    },
+    {
+      "levelId": 110,
+      "passage": "Archaeologists decode the ancient glyphs, unlocking the secret passage beneath the pharaoh's tomb."
+    }
+  ]
+}
